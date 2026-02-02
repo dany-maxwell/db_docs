@@ -1,0 +1,32 @@
+    def cargar_tipos_documento(self):
+        self.tipo_combo.clear()
+        try:
+            tipos_documento = obtener_tipos_documentos()
+            for id, nombre in tipos_documento:
+                self.tipo_combo.addItem(nombre, id)
+        except Exception as e:
+            QMessageBox.critical(self, "Error Tipos de Documento", "No se cargaron los tipos de Documento")
+    
+    def on_tipo_documento_changed(self):
+        tipo_id = self.tipo_combo.currentData()
+        id_acto_inicio = 6
+        if tipo_id == id_acto_inicio:
+            self.infraccion_label.show()
+            self.infraccion_combo.show()
+        else:
+            self.infraccion_label.hide()
+            self.infraccion_combo.hide()
+            self.infraccion_combo.setCurrentIndex(0)
+
+        self.cargar_subtipos(tipo_id)
+
+
+        def cargar_infracciones(self):
+        self.infraccion_combo.clear()
+        self.infraccion_combo.addItem("Seleccione una infraccion", None)
+        try:
+            infracciones = obtener_infracciones()
+            for id, codigo in infracciones:
+                self.infraccion_combo.addItem(codigo, id)
+        except Exception as e:
+            QMessageBox.critical(self, "Error Infracciones", "No se cargaron las Infracciones")
