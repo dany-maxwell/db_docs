@@ -1,12 +1,11 @@
 from db.connection import get_connection
 
-
 def crear_documento_con_numeracion(
     tramite_id,
     tipo_documento_id,
-    subtipo_documento_id,
-    codigo_manual,
     unidad_codigo,
+    codigo_manual=None,
+    subtipo_documento_id=None,
     documento_origen_id=None
 ):
     con = get_connection()

@@ -1,0 +1,64 @@
+import sys
+from PySide6.QtWidgets import (QApplication, QMainWindow, QComboBox, 
+                             QVBoxLayout, QWidget, QLabel, QFrame, QCompleter, QPushButton)
+from PySide6.QtCore import Qt
+
+class MemosComboBox(QComboBox):
+    def __init__(self, items_with_ids, parent=None):
+        super().__init__(parent)
+        self.setEditable(True)
+        
+        codigos = [item[1] for item in items_with_ids]
+        
+        for id_valor, codigo in items_with_ids:
+            self.addItem(codigo, id_valor)
+        
+        self.lineEdit().setPlaceholderText("Buscar opción...")
+        self.setCurrentIndex(-1)
+
+        completer = QCompleter(codigos, self)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.setCompleter(completer)
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.showPopup()
+
+class APComboBox(QComboBox):
+    def __init__(self, items_with_ids, parent=None):
+        super().__init__(parent)
+        self.setEditable(True)
+
+        codigos = [item[1] for item in items_with_ids]
+        
+        for id_valor, codigo in items_with_ids:
+            self.addItem(codigo, id_valor)
+        
+        self.lineEdit().setPlaceholderText("Buscar opción...")
+        self.setCurrentIndex(-1)
+
+        completer = QCompleter(codigos, self)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.setCompleter(completer)
+
+    def actualizar_items(self, nuevos_items):
+        self.clear()
+        for id_valor, codigo in nuevos_items:
+            self.addItem(codigo, id_valor)
+                
+        nuevo_modelo = [item[1] for item in nuevos_items]
+        self.completer().model().setStringList(nuevo_modelo)
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.showPopup()
+
+class TomarNumeroPushButton(QPushButton):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        self.setText("Tomar Numero")
