@@ -43,3 +43,16 @@ def crear_documento_con_numeracion(
         "codigo": codigo_generado,
         "fecha": fecha
 }
+
+def agregar_infraccion(doc_id, infraccion_id):
+    con = get_connection()
+    cur = con.cursor()
+
+    cur.execute(
+        "select agregar_infraccion_a_documento(%s, %s)",
+        (doc_id, infraccion_id)
+    )
+
+    con.commit()
+    cur.close()
+    con.close()

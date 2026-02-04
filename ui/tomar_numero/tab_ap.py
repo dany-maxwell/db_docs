@@ -1,11 +1,10 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox)
 
-from ui.widgets import MemosComboBox
+from ui.widgets import MemoComboBox
 
-from services.catalogo_service import catalogo_memorando_inicio_pas
+from services.catalogo_service import catalogo_documentos
 from services.busqueda_service import (
-    busqueda_proveedor_por_memo,
-    busqueda_tramite_por_memo)
+    busqueda_por_memo)
 
 from services.numeracion_service import crear_documento_con_numeracion
 
@@ -16,8 +15,8 @@ class TabActuacionPrevia(QWidget):
         layout = QVBoxLayout()
 
         layout.addWidget(QLabel("Memorando de Peticion de PAS"))
-        items = catalogo_memorando_inicio_pas()
-        self.combo_memos = MemosComboBox(items)
+        items = catalogo_documentos(1)
+        self.combo_memos = MemoComboBox(items)
         layout.addWidget(self.combo_memos)
 
         layout.addWidget(QLabel("Proveedor:"))
@@ -34,18 +33,18 @@ class TabActuacionPrevia(QWidget):
 
     def id_memorando(self):
         id_memo = self.combo_memos.currentData()
-        proveedor = busqueda_proveedor_por_memo(id_memo)
+        proveedor = busqueda_por_memo(id_memo)[0]
 
-        self.label_proveedor.setText(proveedor[1])
+        self.label_proveedor.setText(proveedor)
 
     def tomar_numero(self):
         id_memo = self.combo_memos.currentData()
         resultado = crear_documento_con_numeracion(
-            tramite_id=busqueda_tramite_por_memo(id_memo),
+            tramite_id=busqueda_por_memo(id_memo)[2],
             tipo_documento_id=4,
             subtipo_documento_id=None,
             codigo_manual=None,
-            unidad_codigo="CZO2"
+            unidad_codigo=busqueda_por_memo(id_memo)[1]
         )
 
         QMessageBox.information(
