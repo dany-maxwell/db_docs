@@ -90,6 +90,31 @@ class TipoComboBox(QComboBox):
         super().mousePressEvent(event)
         self.showPopup()
 
+class SubtipoComboBox(QComboBox):
+    def __init__(self, items_with_ids, parent=None):
+        super().__init__(parent)
+        self.setEditable(True)
+
+        if items_with_ids == None:
+            return
+
+        for id_valor, codigo in items_with_ids:
+            self.addItem(codigo, id_valor)
+        
+        self.lineEdit().setPlaceholderText("No hay subtipos")
+        self.setCurrentIndex(-1)
+
+    def actualizar_items(self, nuevos_items):
+        self.clear()
+        for id_valor, codigo in nuevos_items:
+            self.addItem(codigo, id_valor)
+                
+        self.setCurrentIndex(-1)
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.showPopup()
+
 class InfraccionComboBox(QComboBox):
     def __init__(self, items_with_ids, parent=None):
         super().__init__(parent)

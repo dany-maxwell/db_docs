@@ -52,6 +52,17 @@ def catalogo_documentos(id_tipo, id_subtipo = None, id_tramite = None) :
 
     return datos
 
+def catalogo_tipos():
+    con = get_connection()
+    cur = con.cursor()
+
+    cur.execute("select id, nombre from tipo_documento")
+
+    datos = cur.fetchall()
+    con.close()
+
+    return datos
+
 def catalogo_subtipos(id_tipo):
     con = get_connection()
     cur = con.cursor()

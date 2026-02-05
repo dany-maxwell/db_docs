@@ -37,21 +37,98 @@ def busqueda_documentos_por_tramite(id_tramite):
     cur = con.cursor()
 
     cur.execute("""
-                select * from v_documentos_tramite where tramite_id = %s
+                select 
+                tipo,
+                subtipo,
+                codigo_final,
+                fecha_documento,
+                origen,
+                infracciones,
+                tipo_id,
+                subtipo_id
+                 from v_documentos_tramite where tramite_id = %s
                 """, (id_tramite,))
     
-    dato = cur.fetchone()
-    
+    datos = cur.fetchall()
     con.close()
 
-def busqueda_documentos_por_codigo(texto):
+    return datos
+
+def busqueda_documentos_por_codigo(texto, id_tipo = None, id_subtipo = None):
+    con = get_connection()
+    cur = con.cursor()
+    
+    query =    """
+                select 
+                tipo,
+                subtipo,
+                codigo_final,
+                fecha_documento,
+                origen,
+                infracciones,
+                tipo_id,
+                subtipo_id
+                 from v_busqueda_por_codigo where codigo_final ilike %s
+                """
+    params = [f'%{texto}%']
+
+    if id_tipo is not None:
+        query += " and tipo_id = %s"
+        params.append(id_tipo)
+
+    if id_subtipo is not None:
+        query += " and tramite_id = %s"
+        params.append(id_subtipo)
+
+    query += " order by documento_id desc"
+
+    cur.execute(query, params)
+    
+    datos = cur.fetchall()
+    con.close()
+
+    return datos
+
+def buscar_documentos(memo=None, codigo=None, tipo=None, subtipo=None):
+
     con = get_connection()
     cur = con.cursor()
 
     cur.execute("""
-                select * from v_busqueda_por_codigo = %s
-                """, (f"%{texto}%",))
-    
-    dato = cur.fetchone()
-    
+        select * from f_buscar_documentos(%s, %s, %s, %s)
+    """, (memo, codigo, tipo, subtipo))
+
+    datos = cur.fetchall()
+
     con.close()
+    return datos
+
+def buscar_tramites(
+    proveedor=None,
+    unidad=None,
+    estado=None,
+    fecha_desde=None,
+    fecha_hasta=None,
+    anio=None,
+    mes=None
+):
+    con = get_connection()
+    cur = con.cursor()
+
+    cur.execute("""
+        select * from f_buscar_tramites(
+            %s,%s,%s,%s,%s,%s,%s
+        )
+    """, (
+        proveedor,
+        unidad,
+        estado,
+        fecha_desde,
+        fecha_hasta,
+        anio,
+        mes
+    ))
+
+    datos = cur.fetchall()
+    con.close()
+    return datos

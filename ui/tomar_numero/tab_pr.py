@@ -134,7 +134,11 @@ class TabProvidencia(QWidget):
 
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
+        if id_memo is None: 
+            self.label_proveedor.setText("")
+            return
         proveedor = busqueda_por_memo(id_memo)[0]
+        
 
         self.label_proveedor.setText(proveedor)
 

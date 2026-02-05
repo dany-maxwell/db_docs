@@ -1,34 +1,79 @@
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel,
-                               QPushButton, QGroupBox, QLineEdit, QHBoxLayout, QTableWidget, QTableWidgetItem)
+from PySide6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+    QLineEdit, QGroupBox, QTableWidget,
+    QTableWidgetItem, QPushButton
+)
+
+from PySide6.QtCore import QTimer
+
+from services.busqueda_service import (
+    buscar_documentos,
+    busqueda_por_memo
+)
+
+from services.catalogo_service import (
+    catalogo_documentos,
+    catalogo_tipos,
+    catalogo_subtipos
+)
+
+from ui.widgets import (
+    MemoComboBox,
+    TipoComboBox,
+    SubtipoComboBox
+)
+
 
 class WidgetConsultar(QWidget):
+
     def __init__(self):
         super().__init__()
 
         layout = QVBoxLayout()
-        
-        box_busqueda = QGroupBox("Búsqueda por Memo")
+
+        box_busqueda = QGroupBox("Filtros de búsqueda")
         lay_bus = QHBoxLayout()
 
-        self.txt_memo = QLineEdit()
-        self.txt_memo.setPlaceholderText("Escriba el MEMO INICIO P")
-
-        self.btn_buscar = QPushButton("Buscar")
-
+        memo_items = catalogo_documentos(1)
+        self.combo_memo = MemoComboBox(memo_items)
+        self.combo_memo.setPlaceholderText("Seleccione Memorando Inicio PAS")
         lay_bus.addWidget(QLabel("Memo:"))
-        lay_bus.addWidget(self.txt_memo)
-        lay_bus.addWidget(self.btn_buscar)
+        lay_bus.addWidget(self.combo_memo)
+
+        self.text_codigo = QLineEdit()
+        self.text_codigo.setPlaceholderText("Escriba código parcial")
+        lay_bus.addWidget(QLabel("Código:"))
+        lay_bus.addWidget(self.text_codigo)
+    
+        tipos_items = catalogo_tipos()
+        self.combo_tipos = TipoComboBox(tipos_items)
+        self.combo_tipos.setPlaceholderText("Tipo documento")
+        lay_bus.addWidget(QLabel("Tipo:"))
+        lay_bus.addWidget(self.combo_tipos)
+
+        self.combo_subtipos = SubtipoComboBox([])
+        self.combo_subtipos.setPlaceholderText("Subtipo")
+        lay_bus.addWidget(QLabel("Subtipo:"))
+        lay_bus.addWidget(self.combo_subtipos)
+
+        self.btn_limpiar = QPushButton("Limpiar filtros")
+        lay_bus.addWidget(self.btn_limpiar)
+
+        self.btn_limpiar.clicked.connect(self.limpiar_filtros)
+
 
         box_busqueda.setLayout(lay_bus)
 
         box_info = QGroupBox("Datos del Trámite")
         lay_info = QVBoxLayout()
 
+        self.lbl_tramite = QLabel("Id Tramite: ---")
         self.lbl_proveedor = QLabel("Proveedor: ---")
         self.lbl_unidad = QLabel("Unidad: ---")
         self.lbl_estado = QLabel("Estado: ---")
         self.lbl_fecha = QLabel("Fecha: ---")
 
+        lay_info.addWidget(self.lbl_tramite)
         lay_info.addWidget(self.lbl_proveedor)
         lay_info.addWidget(self.lbl_unidad)
         lay_info.addWidget(self.lbl_estado)
@@ -56,30 +101,62 @@ class WidgetConsultar(QWidget):
 
         self.setLayout(layout)
 
-        self.btn_buscar.clicked.connect(self.buscar)
+        self.cargar_tabla(buscar_documentos())
 
-    def buscar(self):
+        self.combo_memo.currentIndexChanged.connect(self.aplicar_filtros)
+        self.text_codigo.textChanged.connect(self.aplicar_filtros)
+        self.combo_tipos.currentIndexChanged.connect(self.filtrar_subtipos)
+        self.combo_tipos.currentIndexChanged.connect(self.aplicar_filtros)
+        self.combo_subtipos.currentIndexChanged.connect(self.aplicar_filtros)
 
-        memo = self.txt_memo.text()
+    def filtrar_subtipos(self):
+        id_tipo = self.combo_tipos.currentData()
+        new_items = catalogo_subtipos(id_tipo)
 
-        if not memo:
-            return
+        self.combo_subtipos.actualizar_items(new_items)
 
-        # --- AQUÍ luego irá tu service real ---
+    def aplicar_filtros(self):
 
-        # SIMULADO
-        self.lbl_proveedor.setText("Proveedor: CNT EP")
-        self.lbl_unidad.setText("Unidad: CZO2")
-        self.lbl_estado.setText("Estado: En instrucción")
-        self.lbl_fecha.setText("Fecha: 2025-03-12")
+        id_memo = self.combo_memo.currentData()
+        texto_codigo = self.text_codigo.text().strip()
 
-        # cargar tabla fake
-        self.cargar_tabla([
-            ("ACTUACIÓN PREVIA", "", "AP-CZO2-2025-0001", "2025-03-01", "", ""),
-            ("ACTO DE INICIO", "", "AI-CZO2-2025-0005", "2025-03-05", "AP-0001", "117 a)1"),
-            ("PROVIDENCIA", "APERTURA", "PR-0003", "2025-03-07", "AI-0005", "")
-        ])
-    
+        id_tipo = self.combo_tipos.currentData()
+        id_subtipo = self.combo_subtipos.currentData()
+
+        if id_memo:
+            info = busqueda_por_memo(id_memo)
+
+            self.lbl_tramite.setText(f"Id Tramite: {info[2]}")
+            self.lbl_proveedor.setText(f"Proveedor: {info[0]}")
+            self.lbl_unidad.setText(f"Unidad: {info[1]}")
+            self.lbl_estado.setText(f"Estado: {info[3]}")
+            self.lbl_fecha.setText(f"Fecha de Inicio: {str(info[4])}")
+
+        datos = buscar_documentos(
+            memo=id_memo,
+            codigo=texto_codigo,
+            tipo=id_tipo,
+            subtipo=id_subtipo
+        )
+
+        self.cargar_tabla(datos)
+
+    def limpiar_filtros(self):
+
+        self.combo_memo.setCurrentIndex(-1)
+        self.text_codigo.clear()
+
+        self.combo_tipos.setCurrentIndex(-1)
+        self.combo_subtipos.actualizar_items([])
+
+        self.lbl_tramite.setText("Id Tramite: ---")
+        self.lbl_proveedor.setText("Proveedor: ---")
+        self.lbl_unidad.setText("Unidad: ---")
+        self.lbl_estado.setText("Estado: ---")
+        self.lbl_fecha.setText("Fecha: ---")
+
+        self.aplicar_filtros()
+
     def cargar_tabla(self, datos):
 
         self.tabla.setRowCount(0)
@@ -91,7 +168,5 @@ class WidgetConsultar(QWidget):
             for col, valor in enumerate(fila):
                 self.tabla.setItem(
                     row, col,
-                    QTableWidgetItem(str(valor))
+                    QTableWidgetItem(str(valor or ""))
                 )
-
-

@@ -3,4 +3,4 @@ from services.busqueda_service import busqueda_por_memo, busqueda_id_memo_por_do
 
 tramite = 2
 
-print(catalogo_subtipos(7))
+print(catalogo_subtipos(3))
