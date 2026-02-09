@@ -123,7 +123,7 @@ class TabActoInicio(QWidget):
         for inf in self.infracciones_seleccionadas:
             agregar_infraccion(resultado["id"], inf)
         self.infracciones_seleccionadas.clear()
-        self.lista.clear()
+        self.list_inf.clear()
 
         QMessageBox.information(
             self,

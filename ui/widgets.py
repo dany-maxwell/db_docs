@@ -1,6 +1,6 @@
 import sys
-from PySide6.QtWidgets import (QApplication, QMainWindow, QComboBox, 
-                             QVBoxLayout, QWidget, QLabel, QFrame, QCompleter, QPushButton)
+from PySide6.QtWidgets import ( QComboBox, 
+                                QCompleter)
 from PySide6.QtCore import Qt
 
 class MemoComboBox(QComboBox):
@@ -138,8 +138,25 @@ class InfraccionComboBox(QComboBox):
         super().mousePressEvent(event)
         self.showPopup()
 
-class TomarNumeroPushButton(QPushButton):
-    def __init__(self, parent=None):
+class CatalogoComboBox(QComboBox):
+    def __init__(self, items_with_ids, parent=None):
         super().__init__(parent)
+        self.setEditable(True)
+
+        codigos = [item[1] for item in items_with_ids]
         
-        self.setText("Tomar Numero")
+        for id_valor, codigo in items_with_ids:
+            self.addItem(codigo, id_valor)
+        
+        self.lineEdit().setPlaceholderText("Buscar opción...")
+        self.setCurrentIndex(-1)
+
+        completer = QCompleter(codigos, self)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.setCompleter(completer)
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.showPopup()

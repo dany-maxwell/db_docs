@@ -71,10 +71,6 @@ class TabProvidencia(QWidget):
         self.box_fecha.setLayout(self.layout_fecha)
         layout.addWidget(self.box_fecha)
 
-
-
-
-
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         layout.addWidget(self.button_tomar_numero)
 
@@ -145,8 +141,13 @@ class TabProvidencia(QWidget):
     def filtrar_origen (self):
         id_memo = self.combo_memos.currentData()
         if id_memo == None: return
+        if self.radio_ap.isChecked():
+            tipo_id = 4
+        else:
+            tipo_id = 6
+    
         tramite = busqueda_por_memo(id_memo)[2]
-        new_items = catalogo_documentos(4, None, tramite)
+        new_items = catalogo_documentos(tipo_id, None, tramite)
         self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_origen.actualizar_items(new_items)
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)

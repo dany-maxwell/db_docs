@@ -1,161 +1,181 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+    QWidget, QVBoxLayout, QLabel,
     QLineEdit, QGroupBox, QTableWidget,
-    QTableWidgetItem, QPushButton
+    QTableWidgetItem, QPushButton, QComboBox, QDateEdit, QGridLayout,
+    QMessageBox, QFileDialog
 )
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, QDate
+
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
 
 from services.busqueda_service import (
-    buscar_documentos,
-    busqueda_por_memo
+    busqueda_documentos_avanzada
 )
 
 from services.catalogo_service import (
     catalogo_documentos,
     catalogo_tipos,
-    catalogo_subtipos
+    catalogo_subtipos,
+    catalogo_proveedores,
+    catalogo_unidades
 )
 
 from ui.widgets import (
     MemoComboBox,
     TipoComboBox,
-    SubtipoComboBox
+    SubtipoComboBox,
+    CatalogoComboBox
 )
 
-
 class WidgetConsultar(QWidget):
-
     def __init__(self):
         super().__init__()
 
         layout = QVBoxLayout()
 
-        box_busqueda = QGroupBox("Filtros de búsqueda")
-        lay_bus = QHBoxLayout()
+        box_busqueda = QGroupBox("Búsqueda")
+        lay_bus = QGridLayout()
 
-        memo_items = catalogo_documentos(1)
-        self.combo_memo = MemoComboBox(memo_items)
-        self.combo_memo.setPlaceholderText("Seleccione Memorando Inicio PAS")
-        lay_bus.addWidget(QLabel("Memo:"))
-        lay_bus.addWidget(self.combo_memo)
+        self.combo_memo = MemoComboBox(catalogo_documentos(1))
+        lay_bus.addWidget(QLabel("Memo:"), 0, 0)
+        lay_bus.addWidget(self.combo_memo, 0, 1)
 
-        self.text_codigo = QLineEdit()
-        self.text_codigo.setPlaceholderText("Escriba código parcial")
-        lay_bus.addWidget(QLabel("Código:"))
-        lay_bus.addWidget(self.text_codigo)
-    
-        tipos_items = catalogo_tipos()
-        self.combo_tipos = TipoComboBox(tipos_items)
-        self.combo_tipos.setPlaceholderText("Tipo documento")
-        lay_bus.addWidget(QLabel("Tipo:"))
-        lay_bus.addWidget(self.combo_tipos)
+        self.combo_proveedor = CatalogoComboBox(catalogo_proveedores())
+        lay_bus.addWidget(QLabel("Proveedor:"), 1, 0)
+        lay_bus.addWidget(self.combo_proveedor, 1, 1)
 
-        self.combo_subtipos = SubtipoComboBox([])
-        self.combo_subtipos.setPlaceholderText("Subtipo")
-        lay_bus.addWidget(QLabel("Subtipo:"))
-        lay_bus.addWidget(self.combo_subtipos)
+        self.combo_unidad = CatalogoComboBox(catalogo_unidades())
+        lay_bus.addWidget(QLabel("Unidad:"), 2, 0)
+        lay_bus.addWidget(self.combo_unidad, 2, 1)
 
-        self.btn_limpiar = QPushButton("Limpiar filtros")
-        lay_bus.addWidget(self.btn_limpiar)
-
-        self.btn_limpiar.clicked.connect(self.limpiar_filtros)
-
+        self.txt_codigo = QLineEdit()
+        self.txt_codigo.setPlaceholderText("Buscar por código...")
+        lay_bus.addWidget(QLabel("Código:"), 3, 0)
+        lay_bus.addWidget(self.txt_codigo, 3, 1)
 
         box_busqueda.setLayout(lay_bus)
 
-        box_info = QGroupBox("Datos del Trámite")
-        lay_info = QVBoxLayout()
+        box_filtros = QGroupBox("Filtros")
+        lay_fil = QGridLayout()
 
-        self.lbl_tramite = QLabel("Id Tramite: ---")
-        self.lbl_proveedor = QLabel("Proveedor: ---")
-        self.lbl_unidad = QLabel("Unidad: ---")
-        self.lbl_estado = QLabel("Estado: ---")
-        self.lbl_fecha = QLabel("Fecha: ---")
+        self.combo_tipo = TipoComboBox(catalogo_tipos())
+        self.combo_subtipo = SubtipoComboBox([])
 
-        lay_info.addWidget(self.lbl_tramite)
-        lay_info.addWidget(self.lbl_proveedor)
-        lay_info.addWidget(self.lbl_unidad)
-        lay_info.addWidget(self.lbl_estado)
-        lay_info.addWidget(self.lbl_fecha)
+        lay_fil.addWidget(QLabel("Tipo:"), 0, 0)
+        lay_fil.addWidget(self.combo_tipo, 0, 1)
 
-        box_info.setLayout(lay_info)
+        lay_fil.addWidget(QLabel("Subtipo:"), 1, 0)
+        lay_fil.addWidget(self.combo_subtipo, 1, 1)
+
+        self.combo_estado = QComboBox()
+        self.combo_estado.addItems(["", "INICIADO", "En actuacion previa"])
+        lay_fil.addWidget(QLabel("Estado:"), 2, 0)
+        lay_fil.addWidget(self.combo_estado, 2, 1)
+
+        self.date_desde = QDateEdit()
+        self.date_desde.setCalendarPopup(True)
+        self.date_desde.setDate(QDate.currentDate().addMonths(-1))
+
+        self.date_hasta = QDateEdit()
+        self.date_hasta.setCalendarPopup(True)
+        self.date_hasta.setDate(QDate.currentDate())
+
+        lay_fil.addWidget(QLabel("Fecha desde:"), 3, 0)
+        lay_fil.addWidget(self.date_desde, 3, 1)
+
+        lay_fil.addWidget(QLabel("Fecha hasta:"), 4, 0)
+        lay_fil.addWidget(self.date_hasta, 4, 1)
+
+        self.btn_limpiar = QPushButton("Limpiar filtros")
+        lay_fil.addWidget(self.btn_limpiar, 5, 0, 1, 2)
+
+        box_filtros.setLayout(lay_fil)
 
         self.tabla = QTableWidget()
-        self.tabla.setColumnCount(6)
+        self.tabla.setColumnCount(10)
 
         self.tabla.setHorizontalHeaderLabels([
+            "N° Trámite",
+            "Proveedor",
+            "Unidad",
+            "Fecha inicio trámite",
+
             "Tipo",
             "Subtipo",
             "Código",
-            "Fecha",
+            "Fecha documento",
             "Origen",
             "Infracciones"
         ])
 
-        self.tabla.setEditTriggers(QTableWidget.NoEditTriggers)
 
         layout.addWidget(box_busqueda)
-        layout.addWidget(box_info)
+        layout.addWidget(box_filtros)
         layout.addWidget(self.tabla)
+
+        self.btn_excel = QPushButton("Exportar a Excel")
+        self.btn_excel.clicked.connect(self.exportar_excel)
+
+        layout.addWidget(self.btn_excel)
 
         self.setLayout(layout)
 
-        self.cargar_tabla(buscar_documentos())
+        self.cargar_tabla(busqueda_documentos_avanzada())
 
-        self.combo_memo.currentIndexChanged.connect(self.aplicar_filtros)
-        self.text_codigo.textChanged.connect(self.aplicar_filtros)
-        self.combo_tipos.currentIndexChanged.connect(self.filtrar_subtipos)
-        self.combo_tipos.currentIndexChanged.connect(self.aplicar_filtros)
-        self.combo_subtipos.currentIndexChanged.connect(self.aplicar_filtros)
+        self.timer_codigo = QTimer()
+        self.timer_codigo.setSingleShot(True)
+        self.timer_codigo.timeout.connect(self.buscar)
 
-    def filtrar_subtipos(self):
-        id_tipo = self.combo_tipos.currentData()
-        new_items = catalogo_subtipos(id_tipo)
+        self.txt_codigo.textChanged.connect(self.on_codigo_changed)
 
-        self.combo_subtipos.actualizar_items(new_items)
+        self.combo_memo.currentIndexChanged.connect(self.buscar)
+        self.combo_proveedor.currentIndexChanged.connect(self.buscar)
+        self.combo_unidad.currentIndexChanged.connect(self.buscar)
+        
 
-    def aplicar_filtros(self):
+        self.combo_tipo.currentIndexChanged.connect(self.actualizar_subtipos)
+        self.combo_tipo.currentIndexChanged.connect(self.buscar)
+        self.combo_subtipo.currentIndexChanged.connect(self.buscar)
 
-        id_memo = self.combo_memo.currentData()
-        texto_codigo = self.text_codigo.text().strip()
+        self.combo_estado.currentIndexChanged.connect(self.buscar)
 
-        id_tipo = self.combo_tipos.currentData()
-        id_subtipo = self.combo_subtipos.currentData()
+        self.date_desde.dateChanged.connect(self.buscar)
+        self.date_hasta.dateChanged.connect(self.buscar)
 
-        if id_memo:
-            info = busqueda_por_memo(id_memo)
+        
 
-            self.lbl_tramite.setText(f"Id Tramite: {info[2]}")
-            self.lbl_proveedor.setText(f"Proveedor: {info[0]}")
-            self.lbl_unidad.setText(f"Unidad: {info[1]}")
-            self.lbl_estado.setText(f"Estado: {info[3]}")
-            self.lbl_fecha.setText(f"Fecha de Inicio: {str(info[4])}")
+        self.btn_limpiar.clicked.connect(self.limpiar)
 
-        datos = buscar_documentos(
-            memo=id_memo,
-            codigo=texto_codigo,
-            tipo=id_tipo,
-            subtipo=id_subtipo
+    def actualizar_subtipos(self):
+        id_tipo = self.combo_tipo.currentData()
+        self.combo_subtipo.actualizar_items(
+            catalogo_subtipos(id_tipo)
+        )
+
+    def buscar(self):
+
+        datos = busqueda_documentos_avanzada(
+            memo=self.combo_memo.currentData(),
+            proveedor=self.combo_proveedor.currentData(),
+            unidad=self.combo_unidad.currentData(),
+
+            codigo=self.txt_codigo.text(),
+
+            tipo=self.combo_tipo.currentData(),
+            subtipo=self.combo_subtipo.currentData(),
+
+            estado=self.combo_estado.currentText(),
+
+            fecha_desde=self.date_desde.date().toString("yyyy-MM-dd"),
+            fecha_hasta=self.date_hasta.date().toString("yyyy-MM-dd")
         )
 
         self.cargar_tabla(datos)
 
-    def limpiar_filtros(self):
-
-        self.combo_memo.setCurrentIndex(-1)
-        self.text_codigo.clear()
-
-        self.combo_tipos.setCurrentIndex(-1)
-        self.combo_subtipos.actualizar_items([])
-
-        self.lbl_tramite.setText("Id Tramite: ---")
-        self.lbl_proveedor.setText("Proveedor: ---")
-        self.lbl_unidad.setText("Unidad: ---")
-        self.lbl_estado.setText("Estado: ---")
-        self.lbl_fecha.setText("Fecha: ---")
-
-        self.aplicar_filtros()
+    def on_codigo_changed(self):
+        self.timer_codigo.start(500)
 
     def cargar_tabla(self, datos):
 
@@ -165,8 +185,125 @@ class WidgetConsultar(QWidget):
             row = self.tabla.rowCount()
             self.tabla.insertRow(row)
 
-            for col, valor in enumerate(fila):
+            map = {
+                0: fila[0],
+                1: fila[2],
+                2: fila[4],
+                3: fila[7],
+                4: fila[10],
+                5: fila[12],
+                6: fila[14],
+                7: fila[15],
+                8: fila[16],
+                9: fila[17],
+            }
+
+            for col, valor in map.items():
                 self.tabla.setItem(
                     row, col,
-                    QTableWidgetItem(str(valor or ""))
+                    QTableWidgetItem(str(valor if valor is not None else ""))
                 )
+
+    def limpiar(self):
+
+        self.combo_memo.setCurrentIndex(-1)
+        self.combo_proveedor.setCurrentIndex(-1)
+        self.combo_unidad.setCurrentIndex(-1)
+
+        self.txt_codigo.clear()
+
+        self.combo_tipo.setCurrentIndex(-1)
+        self.combo_subtipo.setCurrentIndex(-1)
+
+        self.combo_estado.setCurrentIndex(0)
+
+        self.buscar()
+
+    def exportar_excel(self):
+        ruta, _ = QFileDialog.getSaveFileName(
+            self,
+            "Guardar Excel",
+            "consulta_tramites.xlsx",
+            "Excel (*.xlsx)"
+        )
+
+        if not ruta:
+            return
+
+        wb = Workbook()
+
+        id_memo = self.combo_memo.currentData()
+
+        if id_memo:
+            self._crear_hoja_resumen(wb)
+            self._crear_hoja_documentos(wb, "Documentos")
+        else:
+            self._crear_hoja_documentos(wb, "Listado")
+
+        wb.save(ruta)
+
+        QMessageBox.information(self, "Exportado", "Excel generado correctamente")
+
+    def _crear_hoja_resumen(self, wb):
+        ws = wb.active
+        ws.title = "Resumen"
+
+        ws["A1"] = "RESUMEN DEL TRÁMITE"
+        ws["A1"].font = Font(bold=True, size=14)
+
+        if self.tabla.rowCount() == 0:
+            ws["A3"] = "No hay datos cargados"
+            return
+
+        f = 0
+
+        datos = [
+            ("N° Trámite", self.tabla.item(f, 0).text()),
+            ("Proveedor", self.tabla.item(f, 1).text()),
+            ("Unidad", self.tabla.item(f, 2).text()),
+            ("Fecha inicio", self.tabla.item(f, 3).text()),
+        ]
+
+        fila = 3
+        for titulo, valor in datos:
+            ws[f"A{fila}"] = titulo
+            ws[f"B{fila}"] = valor
+            ws[f"A{fila}"].font = Font(bold=True)
+            fila += 1
+
+        ws[f"A{fila+1}"] = "Total documentos:"
+        ws[f"B{fila+1}"] = self.tabla.rowCount()
+
+    def _crear_hoja_documentos(self, wb, nombre):
+        ws = wb.create_sheet(nombre)
+
+        headers = [
+            "N° Trámite",
+            "Proveedor",
+            "Unidad",
+            "Fecha Inicio",
+            "Tipo",
+            "Subtipo",
+            "Código",
+            "Fecha Documento",
+            "Origen",
+            "Infracciones"
+        ]
+
+        ws.append(headers)
+
+        for col in range(1, len(headers)+1):
+            ws.cell(1, col).font = Font(bold=True)
+
+        for row in range(self.tabla.rowCount()):
+            fila = []
+
+            for col in range(self.tabla.columnCount()):
+                item = self.tabla.item(row, col)
+                fila.append(item.text() if item else "")
+
+            ws.append(fila)
+
+        for column_cells in ws.columns:
+            length = max(len(str(cell.value or "")) for cell in column_cells)
+            ws.column_dimensions[column_cells[0].column_letter].width = length + 2

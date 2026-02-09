@@ -32,103 +32,63 @@ def busqueda_id_memo_por_documento(id_documento):
     con.close()
     return dato[0] if dato else None
 
-def busqueda_documentos_por_tramite(id_tramite):
-    con = get_connection()
-    cur = con.cursor()
-
-    cur.execute("""
-                select 
-                tipo,
-                subtipo,
-                codigo_final,
-                fecha_documento,
-                origen,
-                infracciones,
-                tipo_id,
-                subtipo_id
-                 from v_documentos_tramite where tramite_id = %s
-                """, (id_tramite,))
-    
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
-
-def busqueda_documentos_por_codigo(texto, id_tipo = None, id_subtipo = None):
-    con = get_connection()
-    cur = con.cursor()
-    
-    query =    """
-                select 
-                tipo,
-                subtipo,
-                codigo_final,
-                fecha_documento,
-                origen,
-                infracciones,
-                tipo_id,
-                subtipo_id
-                 from v_busqueda_por_codigo where codigo_final ilike %s
-                """
-    params = [f'%{texto}%']
-
-    if id_tipo is not None:
-        query += " and tipo_id = %s"
-        params.append(id_tipo)
-
-    if id_subtipo is not None:
-        query += " and tramite_id = %s"
-        params.append(id_subtipo)
-
-    query += " order by documento_id desc"
-
-    cur.execute(query, params)
-    
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
-
-def buscar_documentos(memo=None, codigo=None, tipo=None, subtipo=None):
-
-    con = get_connection()
-    cur = con.cursor()
-
-    cur.execute("""
-        select * from f_buscar_documentos(%s, %s, %s, %s)
-    """, (memo, codigo, tipo, subtipo))
-
-    datos = cur.fetchall()
-
-    con.close()
-    return datos
-
-def buscar_tramites(
+def busqueda_documentos_avanzada(
+    memo=None,
     proveedor=None,
     unidad=None,
+    tipo=None,
+    subtipo=None,
     estado=None,
+    codigo=None,
     fecha_desde=None,
-    fecha_hasta=None,
-    anio=None,
-    mes=None
+    fecha_hasta=None
 ):
     con = get_connection()
     cur = con.cursor()
 
-    cur.execute("""
-        select * from f_buscar_tramites(
-            %s,%s,%s,%s,%s,%s,%s
-        )
-    """, (
-        proveedor,
-        unidad,
-        estado,
-        fecha_desde,
-        fecha_hasta,
-        anio,
-        mes
-    ))
+    query = "select * from v_busqueda_avanzada where 1=1"
+    params = []
 
+    if memo:
+        query += " and memo_id = %s"
+        params.append(memo)
+
+    if proveedor:
+        query += " and proveedor_id = %s"
+        params.append(proveedor)
+
+    if unidad:
+        query += " and unidad_id = %s"
+        params.append(unidad)
+
+    if tipo:
+        query += " and tipo_id = %s"
+        params.append(tipo)
+
+    if subtipo:
+        query += " and subtipo_id = %s"
+        params.append(subtipo)
+
+    if estado:
+        query += " and estado = %s"
+        params.append(estado)
+
+    if codigo:
+        query += " and codigo ilike %s"
+        params.append(f"%{codigo}%")
+
+    if fecha_desde:
+        query += " and fecha >= %s"
+        params.append(fecha_desde)
+
+    if fecha_hasta:
+        query += " and fecha <= %s"
+        params.append(fecha_hasta)
+
+    query += " order by fecha desc"
+
+    cur.execute(query, params)
     datos = cur.fetchall()
+
     con.close()
     return datos
