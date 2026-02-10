@@ -43,7 +43,7 @@ class TabProvidencia(QWidget):
         self.label_proveedor = QLabel("")
         layout.addWidget(self.label_proveedor)
 
-        layout.addWidget(QLabel("Origen"))
+        self.label_origen = QLabel("")
         items = []
         self.combo_origen = OrigenComboBox(items)
         layout.addWidget(self.combo_origen)
@@ -91,6 +91,8 @@ class TabProvidencia(QWidget):
         if self.radio_ap.isChecked():
             self.combo_memos.setCurrentIndex(-1)
 
+            self.label_origen.setText("Actuacion Previa")
+
             ap_items = catalogo_documentos(4)
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
             self.combo_origen.actualizar_items(ap_items)
@@ -104,6 +106,8 @@ class TabProvidencia(QWidget):
         elif self.radio_instr.isChecked():
             self.combo_memos.setCurrentIndex(-1)
 
+            self.label_origen.setText("Acto de Inicio")
+
             ai_items = catalogo_documentos(6)
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
             self.combo_origen.actualizar_items(ai_items)
@@ -113,10 +117,13 @@ class TabProvidencia(QWidget):
             self.combo_tipo.actualizar_items(tipo_items)
             self.label_tipo.show()
             self.combo_tipo.show()
+            self.box_fecha.hide()
 
 
         elif self.radio_res.isChecked():
             self.combo_memos.setCurrentIndex(-1)
+
+            self.label_origen.setText("Acto de Inicio")
 
             ai_items = catalogo_documentos(6)
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)

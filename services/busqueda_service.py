@@ -85,7 +85,7 @@ def busqueda_documentos_avanzada(
         query += " and fecha <= %s"
         params.append(fecha_hasta)
 
-    query += " order by fecha desc"
+    query += " order by documento_id desc"
 
     cur.execute(query, params)
     datos = cur.fetchall()
