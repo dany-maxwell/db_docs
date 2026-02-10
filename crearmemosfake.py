@@ -29,6 +29,6 @@ def generar_memos_fake(n=1000):
         """, (tramite_id, memo))
 
     conn.commit()
-    print(f"✅ Creados {n} trámites con memos fake")
+    print(f" Creados {n} trámites con memos fake")
 
 generar_memos_fake()

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox, QListWidget)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox, QListWidget, QHBoxLayout, QGroupBox)
 
 from ui.widgets import (
     MemoComboBox,
@@ -23,34 +23,49 @@ class TabActoInicio(QWidget):
 
         layout = QVBoxLayout()
 
-        layout.addWidget(QLabel("Memorando de Peticion de PAS"))
-        memo_items = catalogo_documentos(1)
-        self.combo_memos = MemoComboBox(memo_items)
-        layout.addWidget(self.combo_memos)
+        box_memo = QGroupBox("Memorando de Petición de PAS")
+        lay_memo = QVBoxLayout()
 
-        layout.addWidget(QLabel("Proveedor:"))
+        self.combo_memos = MemoComboBox([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        lay_memo.addWidget(self.combo_memos)
+
+        lay_memo.addWidget(QLabel("Proveedor:"))
         self.label_proveedor = QLabel("")
-        layout.addWidget(self.label_proveedor)
+        lay_memo.addWidget(self.label_proveedor)
 
-        layout.addWidget(QLabel("Informe FINAL de Actuacion Previa Correspondiente"))
-        iap_items = catalogo_documentos(5, 2)
-        self.combo_iap = OrigenComboBox(iap_items)
-        layout.addWidget(self.combo_iap)
+        box_memo.setLayout(lay_memo)
+        layout.addWidget(box_memo)
 
-        layout.addWidget(QLabel("Posible Infraccion"))
-        inf_items = catalogo_infracciones()
-        self.combo_inf = InfraccionComboBox(inf_items)
-        layout.addWidget(self.combo_inf)
+        box_iap = QGroupBox("Informe FINAL de Actuación Previa")
+        lay_iap = QVBoxLayout()
 
-        layout.addWidget(QLabel("Lista:"))
+        self.combo_iap = OrigenComboBox(catalogo_documentos(5, 2))
+        lay_iap.addWidget(self.combo_iap)
+
+        box_iap.setLayout(lay_iap)
+        layout.addWidget(box_iap)
+
+        box_inf = QGroupBox("Infracciones")
+        lay_inf = QVBoxLayout()
+
+        self.combo_inf = InfraccionComboBox(catalogo_infracciones())
+        lay_inf.addWidget(self.combo_inf)
+
+        botones_inf = QHBoxLayout()
+
+        self.btn_add_inf = QPushButton("Añadir")
+        self.btn_del_inf = QPushButton("Quitar")
+
+        botones_inf.addWidget(self.btn_add_inf)
+        botones_inf.addWidget(self.btn_del_inf)
+
+        lay_inf.addLayout(botones_inf)
+
         self.list_inf = QListWidget()
-        layout.addWidget(self.list_inf)
+        lay_inf.addWidget(self.list_inf)
 
-        self.button_añadir_infraccion = QPushButton("Añadir Infraccion")
-        layout.addWidget(self.button_añadir_infraccion)
-
-        self.button_quitar_infraccion = QPushButton("Quitar Infraccion")
-        layout.addWidget(self.button_quitar_infraccion)
+        box_inf.setLayout(lay_inf)
+        layout.addWidget(box_inf)
 
         self.button_tomar_numero = QPushButton("Tomar Numero AI")
         layout.addWidget(self.button_tomar_numero)
@@ -62,20 +77,28 @@ class TabActoInicio(QWidget):
         self.combo_memos.currentIndexChanged.connect(self.mostrar_proveedor)
         self.combo_memos.currentIndexChanged.connect(self.filtrar_iap)
         self.combo_iap.currentIndexChanged.connect(self.filtrar_mem)
-        self.button_añadir_infraccion.clicked.connect(self.agregar_infraccion)
-        self.button_quitar_infraccion.clicked.connect(self.quitar_infraccion)
+        self.btn_add_inf.clicked.connect(self.agregar_infraccion)
+        self.btn_del_inf.clicked.connect(self.quitar_infraccion)
         self.button_tomar_numero.clicked.connect(self.tomar_numero)
 
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
+        if not id_memo:
+            self.label_proveedor.setText("")
+            return
         proveedor = busqueda_por_memo(id_memo)[0]
 
         self.label_proveedor.setText(proveedor)
 
     def filtrar_iap (self):
         id_memo = self.combo_memos.currentData()
-        tramite = busqueda_por_memo(id_memo)[2]
-        new_items = catalogo_documentos(5, 2, tramite)
+        
+        if not id_memo:
+            new_items = catalogo_documentos(5, 2)
+        else:
+            tramite = busqueda_por_memo(id_memo)[2]
+            new_items = catalogo_documentos(5, 2, tramite)
+        
         self.combo_iap.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_iap.actualizar_items(new_items)
         self.combo_iap.currentIndexChanged.connect(self.filtrar_mem)

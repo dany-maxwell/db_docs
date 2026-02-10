@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox, QGroupBox)
 
 from ui.widgets import (
     MemoComboBox,
@@ -21,24 +21,38 @@ class TabInformeAP(QWidget):
 
         layout = QVBoxLayout()
         
-        layout.addWidget(QLabel("Memorando de Peticion de PAS"))
-        memo_items = catalogo_documentos(1)
-        self.combo_memos = MemoComboBox(memo_items)
-        layout.addWidget(self.combo_memos)
+        box_memo = QGroupBox("Memorando de Petición de PAS")
+        lay_memo = QVBoxLayout()
 
-        layout.addWidget(QLabel("Proveedor:"))
+        self.combo_memos = MemoComboBox([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        lay_memo.addWidget(self.combo_memos)
+
+        lay_memo.addWidget(QLabel("Proveedor:"))
         self.label_proveedor = QLabel("")
-        layout.addWidget(self.label_proveedor)
+        lay_memo.addWidget(self.label_proveedor)
 
-        layout.addWidget(QLabel("Actuacion Previa Correspondiente"))
+        box_memo.setLayout(lay_memo)
+        layout.addWidget(box_memo)
+
+        box_ap = QGroupBox("Actuacion Previa Correspondiente")
+        lay_ap = QVBoxLayout()
+
         ap_items = catalogo_documentos(4)
         self.combo_ap = OrigenComboBox(ap_items)
-        layout.addWidget(self.combo_ap)
+        lay_ap.addWidget(self.combo_ap)
 
-        layout.addWidget(QLabel("Tipo Informe AP"))
+        box_ap.setLayout(lay_ap)
+        layout.addWidget(box_ap)
+        
+        box_tipo = QGroupBox("Tipo de Informe de Actuación Previa")
+        lay_tipo = QVBoxLayout()
+
         t_iap_items = catalogo_subtipos(5)
         self.combo_iap = TipoComboBox(t_iap_items)
-        layout.addWidget(self.combo_iap)
+        lay_tipo.addWidget(self.combo_iap)
+
+        box_tipo.setLayout(lay_tipo)
+        layout.addWidget(box_tipo)
 
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         layout.addWidget(self.button_tomar_numero)
@@ -52,14 +66,22 @@ class TabInformeAP(QWidget):
 
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
+        if not id_memo:
+            self.label_proveedor.setText("")
+            return
         proveedor = busqueda_por_memo(id_memo)[0]
 
         self.label_proveedor.setText(proveedor)
 
     def filtrar_ap (self):
         id_memo = self.combo_memos.currentData()
-        tramite = busqueda_por_memo(id_memo)[2]
-        new_items = catalogo_documentos(4, None, tramite)
+        
+        if not id_memo:
+            new_items = catalogo_documentos(4)
+        else:
+            tramite = busqueda_por_memo(id_memo)[2]
+            new_items = catalogo_documentos(4, None, tramite)
+        
         self.combo_ap.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_ap.actualizar_items(new_items)
         self.combo_ap.currentIndexChanged.connect(self.filtrar_mem)

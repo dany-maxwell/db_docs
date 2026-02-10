@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox, QGroupBox
 
 from ui.widgets import (
     MemoComboBox,
@@ -21,27 +21,39 @@ class TabInformeJuridico(QWidget):
         super().__init__()
 
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Memorando de Petición de PAS"))
-        memo_items = catalogo_documentos(1)
-        self.combo_memos = MemoComboBox(memo_items)
-        layout.addWidget(self.combo_memos)
 
-        layout.addWidget(QLabel("Proveedor:"))
+        box_memo = QGroupBox("Memorando de Petición de PAS")
+        lay_memo = QVBoxLayout()
+
+        self.combo_memos = MemoComboBox([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        lay_memo.addWidget(self.combo_memos)
+
+        lay_memo.addWidget(QLabel("Proveedor:"))
         self.label_proveedor = QLabel("")
-        layout.addWidget(self.label_proveedor)
+        lay_memo.addWidget(self.label_proveedor)
 
-        layout.addWidget(QLabel("Tipo Informe Jurídico"))
+        box_memo.setLayout(lay_memo)
+        layout.addWidget(box_memo)
+
+        box_ij = QGroupBox("Tipo de Informe Jurídico")
+        lay_ij = QVBoxLayout()
+
         t_ij_items = catalogo_subtipos(11)
         self.combo_ij = TipoComboBox(t_ij_items)
-        layout.addWidget(self.combo_ij)
+        lay_ij.addWidget(self.combo_ij)
+        box_ij.setLayout(lay_ij)
+        layout.addWidget(box_ij)
 
-        self.label_origen = QLabel("Acto de Inicio")
+        self.box_ai = QGroupBox("Acto de Inicio Correspondiente")
+        lay_ai = QVBoxLayout()
+
         items = catalogo_documentos(6)
         self.combo_origen = OrigenComboBox(items)
-        layout.addWidget(self.label_origen)
-        layout.addWidget(self.combo_origen)
-        self.label_origen.hide()
-        self.combo_origen.hide()
+        lay_ai.addWidget(self.combo_origen)
+        self.box_ai.setLayout(lay_ai)
+        layout.addWidget(self.box_ai)
+        
+        self.box_ai.hide()
 
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         layout.addWidget(self.button_tomar_numero)
@@ -56,15 +68,21 @@ class TabInformeJuridico(QWidget):
 
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
+        if not id_memo:
+            self.label_proveedor.setText("")
+            return
         proveedor = busqueda_por_memo(id_memo)[0]
 
         self.label_proveedor.setText(proveedor)
 
     def filtrar_origen (self):
         id_memo = self.combo_memos.currentData()
-        tramite = busqueda_por_memo(id_memo)[2]
-        new_items = catalogo_documentos(6, None, tramite)
-        print(new_items)
+        if not id_memo:
+            new_items = catalogo_documentos(6)
+        else:
+            tramite = busqueda_por_memo(id_memo)[2]
+            new_items = catalogo_documentos(6, None, tramite)
+            
         self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_origen.actualizar_items(new_items)
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
@@ -79,11 +97,9 @@ class TabInformeJuridico(QWidget):
     def mostrar_origen (self):
         idx_tipo = self.combo_ij.currentIndex()
         if idx_tipo == 0:
-            self.label_origen.show()
-            self.combo_origen.show()
+            self.box_ai.show()
         else: 
-            self.label_origen.hide()
-            self.combo_origen.hide()
+            self.box_ai.hide()
 
     def tomar_numero(self):
         id_memo = self.combo_memos.currentData()

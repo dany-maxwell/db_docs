@@ -34,41 +34,67 @@ class TabProvidencia(QWidget):
 
         layout.addLayout(radios)
 
-        layout.addWidget(QLabel("Memorando de Peticion de PAS"))
-        memo_items = catalogo_documentos(1)
-        self.combo_memos = MemoComboBox(memo_items)
-        layout.addWidget(self.combo_memos)
+        box_memo = QGroupBox("Memorando de Petición de PAS")
+        lay_memo = QVBoxLayout()
 
-        layout.addWidget(QLabel("Proveedor:"))
+        self.combo_memos = MemoComboBox([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        lay_memo.addWidget(self.combo_memos)
+
+        lay_memo.addWidget(QLabel("Proveedor:"))
         self.label_proveedor = QLabel("")
-        layout.addWidget(self.label_proveedor)
+        lay_memo.addWidget(self.label_proveedor)
 
-        self.label_origen = QLabel("")
+        box_memo.setLayout(lay_memo)
+        layout.addWidget(box_memo)
+
+        self.box_origen = QGroupBox("")
+        lay_origen = QVBoxLayout()
+
         items = []
         self.combo_origen = OrigenComboBox(items)
-        layout.addWidget(self.combo_origen)
+        lay_origen.addWidget(self.combo_origen)
 
-        self.label_tipo = QLabel("Tipo")
+        self.box_origen.setLayout(lay_origen)
+        layout.addWidget(self.box_origen)
+
+        self.box_tipo = QGroupBox("Tipo")
+        lay_tipo = QVBoxLayout()
+
         self.combo_tipo = TipoComboBox(items)
-        layout.addWidget(self.label_tipo)
-        layout.addWidget(self.combo_tipo)
+        lay_tipo.addWidget(self.combo_tipo)
 
-        
+        self.box_tipo.setLayout(lay_tipo)
+        layout.addWidget(self.box_tipo)
+
+        self.box_tipo.hide()
+
         self.box_fecha = QGroupBox()
-        self.layout_fecha = QHBoxLayout()
+        layout_fecha = QHBoxLayout()
 
-        self.edit_fecha = QDateEdit()
-        self.edit_fecha.setDate(QDate.currentDate())
-        self.edit_fecha.setCalendarPopup(True)
+        box_mAplazados = QGroupBox("Meses que se aplaza")
+        lay_mAplazados = QVBoxLayout()
 
         self.combo_mes = QComboBox()
         self.combo_mes.addItem("1", 1)
         self.combo_mes.addItem("2", 2)
 
-        self.layout_fecha.addWidget(self.combo_mes)
-        self.layout_fecha.addWidget(self.edit_fecha)
+        lay_mAplazados.addWidget(self.combo_mes)
+        box_mAplazados.setLayout(lay_mAplazados)
 
-        self.box_fecha.setLayout(self.layout_fecha)
+        box_fechaI = QGroupBox("Fecha desde la cual se aplaza")
+        lay_fechaI = QVBoxLayout()
+        
+        self.edit_fecha = QDateEdit()
+        self.edit_fecha.setDate(QDate.currentDate())
+        self.edit_fecha.setCalendarPopup(True)
+
+        lay_fechaI.addWidget(self.edit_fecha)
+        box_fechaI.setLayout(lay_fechaI)
+
+        layout_fecha.addWidget(box_mAplazados)
+        layout_fecha.addWidget(box_fechaI)
+
+        self.box_fecha.setLayout(layout_fecha)
         layout.addWidget(self.box_fecha)
 
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
@@ -89,24 +115,23 @@ class TabProvidencia(QWidget):
 
     def cambiar_modo(self):
         if self.radio_ap.isChecked():
-            self.combo_memos.setCurrentIndex(-1)
+            self.combo_memos.setCurrentIndex(0)
 
-            self.label_origen.setText("Actuacion Previa")
+            self.box_origen.setTitle("Actuacion Previa")
 
             ap_items = catalogo_documentos(4)
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
             self.combo_origen.actualizar_items(ap_items)
             self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
 
-            self.label_tipo.hide()
-            self.combo_tipo.hide()
+            self.box_tipo.hide()
 
             self.box_fecha.hide()
 
         elif self.radio_instr.isChecked():
-            self.combo_memos.setCurrentIndex(-1)
+            self.combo_memos.setCurrentIndex(0)
 
-            self.label_origen.setText("Acto de Inicio")
+            self.box_origen.setTitle("Acto de Inicio")
 
             ai_items = catalogo_documentos(6)
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
@@ -115,29 +140,27 @@ class TabProvidencia(QWidget):
             
             tipo_items = catalogo_subtipos(7)
             self.combo_tipo.actualizar_items(tipo_items)
-            self.label_tipo.show()
-            self.combo_tipo.show()
+            
+            self.box_tipo.show()
             self.box_fecha.hide()
 
 
         elif self.radio_res.isChecked():
-            self.combo_memos.setCurrentIndex(-1)
+            self.combo_memos.setCurrentIndex(0)
 
-            self.label_origen.setText("Acto de Inicio")
+            self.box_origen.setTitle("Acto de Inicio")
 
             ai_items = catalogo_documentos(6)
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
             self.combo_origen.actualizar_items(ai_items)
             self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
 
-            self.label_tipo.hide()
-            self.combo_tipo.hide()
-
+            self.box_tipo.hide()
             self.box_fecha.show()
 
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
-        if id_memo is None: 
+        if not id_memo:
             self.label_proveedor.setText("")
             return
         proveedor = busqueda_por_memo(id_memo)[0]
@@ -147,14 +170,17 @@ class TabProvidencia(QWidget):
 
     def filtrar_origen (self):
         id_memo = self.combo_memos.currentData()
-        if id_memo == None: return
         if self.radio_ap.isChecked():
             tipo_id = 4
         else:
             tipo_id = 6
-    
-        tramite = busqueda_por_memo(id_memo)[2]
-        new_items = catalogo_documentos(tipo_id, None, tramite)
+
+        if not id_memo:
+            new_items = catalogo_documentos(6)
+        else:
+            tramite = busqueda_por_memo(id_memo)[2]
+            new_items = catalogo_documentos(tipo_id, None, tramite)
+        
         self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_origen.actualizar_items(new_items)
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)

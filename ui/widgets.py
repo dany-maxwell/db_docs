@@ -20,7 +20,7 @@ class MemoComboBox(QComboBox):
             self.addItem(codigo, id_valor)
         
         self.lineEdit().setPlaceholderText("Buscar opción...")
-        self.setCurrentIndex(-1)
+        self.setCurrentIndex(0)
 
         completer = QCompleter(codigos, self)
         completer.setFilterMode(Qt.MatchContains)
