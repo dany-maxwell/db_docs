@@ -1,10 +1,130 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox, QHBoxLayout,
+                                QLineEdit, QDateEdit, QPushButton, QTextEdit, QMessageBox)
+from PySide6.QtCore import QDate
+
+from ui.widgets import CatalogoComboBox
+from services.catalogo_service import catalogo_unidades, catalogo_proveedores
+from services.busqueda_service import busqueda_info_proveedor
+from services.numeracion_service import crear_tramite
+from constants import ESTADO_POR_DEFECTO, FORMATO_FECHA, MSG_TRAMITE_INICIADO
+
 
 class WidgetCrearTramite(QWidget):
     def __init__(self):
         super().__init__()
+        self.setup_ui()
+        self.combo_proveedores.currentIndexChanged.connect(self.mostrar_datos_proveedor)
+        self.button_iniciar_tramite.clicked.connect(self.iniciar_tramite)
 
+    def setup_ui(self):
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Módulo CREAR TRÁMITE (pendiente)"))
-
+        
+        # Proveedor
+        box_proveedor = QGroupBox("Selecciona Proveedor")
+        lay_prov = QVBoxLayout()
+        self.combo_proveedores = CatalogoComboBox(catalogo_proveedores())
+        
+        self.labels_prov = {
+            "nombre": QLabel("Nombre: -"),
+            "cedula": QLabel("Cédula/Ruc: -"),
+            "ciudad": QLabel("Ciudad: -"),
+            "canton": QLabel("Canton: -"),
+            "provincia": QLabel("Provincia: -")
+        }
+        lay_prov.addWidget(self.combo_proveedores)
+        for label in self.labels_prov.values():
+            lay_prov.addWidget(label)
+        box_proveedor.setLayout(lay_prov)
+        layout.addWidget(box_proveedor)
+        
+        # Datos
+        box_datos = QGroupBox("Datos")
+        lay_datos = QVBoxLayout()
+        
+        lay_unidad = QHBoxLayout()
+        lay_unidad.addWidget(QLabel("Unidad: "))
+        self.combo_unidad = CatalogoComboBox(catalogo_unidades())
+        lay_unidad.addWidget(self.combo_unidad)
+        lay_datos.addLayout(lay_unidad)
+        
+        lay_servicio = QHBoxLayout()
+        lay_servicio.addWidget(QLabel("Servicio: "))
+        self.combo_servicio = CatalogoComboBox([])
+        lay_servicio.addWidget(self.combo_servicio)
+        lay_datos.addLayout(lay_servicio)
+        box_datos.setLayout(lay_datos)
+        
+        # Trámite
+        box_tramite = QGroupBox("Trámite")
+        lay_tramite = QVBoxLayout()
+        
+        self.docs = {}
+        for cod, etiqueta in [("memo", "Memorando Inicio PAS: "),
+                               ("peticion", "Peticion Razonada: "),
+                               ("informe", "Informe Técnico: ")]:
+            lay = QHBoxLayout()
+            lay.addWidget(QLabel(etiqueta))
+            self.docs[cod] = {"line": QLineEdit(), "date": QDateEdit()}
+            self.docs[cod]["date"].setCalendarPopup(True)
+            self.docs[cod]["date"].setDate(QDate.currentDate())
+            lay.addWidget(self.docs[cod]["line"])
+            lay.addWidget(self.docs[cod]["date"])
+            lay_tramite.addLayout(lay)
+        
+        lay_asunto = QVBoxLayout()
+        lay_asunto.addWidget(QLabel("Asunto: "))
+        self.line_asunto = QTextEdit()
+        lay_asunto.addWidget(self.line_asunto)
+        lay_tramite.addLayout(lay_asunto)
+        box_tramite.setLayout(lay_tramite)
+        
+        layout.addWidget(box_datos)
+        layout.addWidget(box_tramite)
+        
+        self.button_iniciar_tramite = QPushButton(" Iniciar Trámite")
+        layout.addWidget(self.button_iniciar_tramite)
         self.setLayout(layout)
+
+    def mostrar_datos_proveedor(self):
+        id_proveedor = self.combo_proveedores.currentData()
+        if not id_proveedor:
+            for label in self.labels_prov.values():
+                label.setText("-")
+            return
+        
+        datos = busqueda_info_proveedor(id_proveedor)
+        if datos:
+            self.labels_prov["nombre"].setText(f"Nombre: {datos[1]}")
+            self.labels_prov["cedula"].setText(f"Cédula/Ruc: {datos[2]}")
+            self.labels_prov["ciudad"].setText("Ciudad: -")
+            self.labels_prov["canton"].setText("Canton: -")
+            self.labels_prov["provincia"].setText("Provincia: -")
+
+    def actualizar_combos(self):
+            # Refresca combos principales
+            self.combo_proveedores._setup_items(catalogo_proveedores())
+            self.combo_unidad._setup_items(catalogo_unidades())
+
+    def iniciar_tramite(self):
+        codigo_informe = self.docs["informe"]["line"].text().strip()
+        codigo_peticion = self.docs["peticion"]["line"].text().strip()
+        
+        resultado = crear_tramite(
+            proveedor_id=self.combo_proveedores.currentData(),
+            unidad_id=self.combo_unidad.currentData(),
+            estado=ESTADO_POR_DEFECTO,
+            fecha_tramite=QDate.currentDate().toString(FORMATO_FECHA),
+            asunto=self.line_asunto.toPlainText(),
+            codigo_memo=self.docs["memo"]["line"].text(),
+            fecha_memo=self.docs["memo"]["date"].date().toString(FORMATO_FECHA),
+            codigo_peticion=codigo_peticion if codigo_peticion else None,
+            fecha_peticion=self.docs["peticion"]["date"].date().toString(FORMATO_FECHA),
+            codigo_informe=codigo_informe if codigo_informe else None,
+            fecha_informe=self.docs["informe"]["date"].date().toString(FORMATO_FECHA)
+        )
+
+        QMessageBox.information(
+            self,
+            MSG_TRAMITE_INICIADO,
+            f"Trámite iniciado con éxito.\nCódigo de Memorando: {resultado['codigo_memo']}\nFecha: {resultado['fecha_memo']}"
+        )

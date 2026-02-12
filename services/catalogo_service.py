@@ -1,38 +1,17 @@
-from db.connection import get_connection
+from services.db_helper import ejecutar_query
+from functools import lru_cache
+
 
 def catalogo_proveedores():
-    con = get_connection()
-    cur = con.cursor()
-
-    cur.execute("select id, nombre from proveedor order by nombre")
-
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
+    return ejecutar_query("select id, nombre from proveedor order by nombre", fetch_all=True)
 
 
 def catalogo_unidades():
-    con = get_connection()
-    cur = con.cursor()
+    return ejecutar_query("select id, codigo from unidad order by id", fetch_all=True)
 
-    cur.execute("select id, nombre from unidad order by id")
 
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
-
-def catalogo_documentos(id_tipo, id_subtipo = None, id_tramite = None) :
-    con = get_connection()
-    cur = con.cursor()
-
-    query = """
-        select id, codigo_final
-        from documento
-        where tipo_documento_id = %s
-    """
-
+def catalogo_documentos(id_tipo, id_subtipo=None, id_tramite=None):
+    query = "select id, codigo_final from documento where tipo_documento_id = %s"
     params = [id_tipo]
 
     if id_subtipo is not None:
@@ -44,43 +23,29 @@ def catalogo_documentos(id_tipo, id_subtipo = None, id_tramite = None) :
         params.append(id_tramite)
 
     query += " order by id desc"
+    return ejecutar_query(query, params, fetch_all=True)
 
-    cur.execute(query, params)
+def catalogo_documentos_tramite(id_tramite):
+    query = """
+        select codigo_final, tipo, subtipo, fecha_documento, documento_id
+        from v_documentos_tramite
+        where tramite_id = %s
+        order by documento_id asc
+    """
+    return ejecutar_query(query, (id_tramite,), fetch_all=True)
 
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
-
+@lru_cache(maxsize=32)
 def catalogo_tipos():
-    con = get_connection()
-    cur = con.cursor()
+    return ejecutar_query("select id, nombre from tipo_documento", fetch_all=True)
 
-    cur.execute("select id, nombre from tipo_documento")
-
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
-
+@lru_cache(maxsize=128)
 def catalogo_subtipos(id_tipo):
-    con = get_connection()
-    cur = con.cursor()
+    return ejecutar_query(
+        "select id, nombre from subtipo_documento where tipo_documento_id = %s",
+        (id_tipo,),
+        fetch_all=True
+    )
 
-    cur.execute("select id, nombre from subtipo_documento where tipo_documento_id = %s", (id_tipo,))
-
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
-
+@lru_cache(maxsize=32)
 def catalogo_infracciones():
-    con = get_connection()
-    cur = con.cursor()
-
-    cur.execute("select id, codigo_infraccion from infraccion")
-
-    datos = cur.fetchall()
-    con.close()
-
-    return datos
+    return ejecutar_query("select id, codigo_infraccion from infraccion", fetch_all=True)

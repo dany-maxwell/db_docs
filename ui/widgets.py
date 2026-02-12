@@ -1,155 +1,81 @@
-from PySide6.QtWidgets import ( QComboBox, QHBoxLayout, QVBoxLayout, QListWidget,
+from PySide6.QtWidgets import (QComboBox, QHBoxLayout, QVBoxLayout, QListWidget,
                                 QCompleter, QMessageBox, QLabel, QPushButton, QWidget,
-                                QLineEdit, QGridLayout )
-from PySide6.QtCore import Qt
+                                QLineEdit, QGridLayout, QGroupBox, QDateEdit)
+from PySide6.QtCore import Qt, QDate
 
 from services.catalogo_service import (
-    catalogo_documentos,
-    catalogo_proveedores,
-    catalogo_unidades,
-    catalogo_tipos)
+    catalogo_documentos, catalogo_proveedores, catalogo_unidades, catalogo_tipos)
+from constants import MSG_INFRACCION_AGREGADA, ESTADOS_COMBO
 
-class MemoComboBox(QComboBox):
-    def __init__(self, items_with_ids, parent=None):
+class BaseComboBox(QComboBox):
+    """Base class for custom combo boxes with search and autocomplete"""
+    DEFAULT_INDEX = -1
+    PLACEHOLDER = "Buscar opción..."
+    
+    def __init__(self, items_with_ids=None, parent=None, with_completer=True):
         super().__init__(parent)
         self.setEditable(True)
+        self.with_completer = with_completer
+        if items_with_ids:
+            self._setup_items(items_with_ids)
+    
+    def _setup_items(self, items):
+        if not items:
+            return
+        self.blockSignals(True)
+        self.clear()
         
-        codigos = [item[1] for item in items_with_ids]
-        
-        for id_valor, codigo in items_with_ids:
+        codigos = [item[1] for item in items]
+        for id_valor, codigo in items:
             self.addItem(codigo, id_valor)
         
-        self.lineEdit().setPlaceholderText("Buscar opción...")
-        self.setCurrentIndex(0)
+        self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
+        self.setCurrentIndex(self.DEFAULT_INDEX)
+        
+        if self.with_completer:
+            completer = QCompleter(codigos, self)
+            completer.setFilterMode(Qt.MatchContains)
+            completer.setCaseSensitivity(Qt.CaseInsensitive)
+            completer.setCompletionMode(QCompleter.PopupCompletion)
+            self.setCompleter(completer)
+        
+        self.blockSignals(False)
+    
+    def actualizar_items(self, nuevos_items):
+        self.clear()
+        self._setup_items(nuevos_items)
+    
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.showPopup()
 
-        completer = QCompleter(codigos, self)
-        completer.setFilterMode(Qt.MatchContains)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        completer.setCompletionMode(QCompleter.PopupCompletion)
-        self.setCompleter(completer)
-
+class MemoComboBox(BaseComboBox):
+    DEFAULT_INDEX = 0
+    
     def actualizar_index(self, id_tramite):
-        index = self.findData(id_tramite)
-        self.setCurrentIndex(index)
+        self.setCurrentIndex(self.findData(id_tramite))
 
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.showPopup()
+class OrigenComboBox(BaseComboBox):
+    pass
 
-class OrigenComboBox(QComboBox):
-    def __init__(self, items_with_ids, parent=None):
-        super().__init__(parent)
-        self.setEditable(True)
+class TipoComboBox(BaseComboBox):
+    pass
 
-        if items_with_ids == None:
-            return
-        
-        codigos = [item[1] for item in items_with_ids]
-        
-        for id_valor, codigo in items_with_ids:
-            self.addItem(codigo, id_valor)
-        
-        self.lineEdit().setPlaceholderText("Buscar opción...")
-        self.setCurrentIndex(-1)
+class SubtipoComboBox(BaseComboBox):
+    PLACEHOLDER = "No hay subtipos"
 
-        completer = QCompleter(codigos, self)
-        completer.setFilterMode(Qt.MatchContains)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        completer.setCompletionMode(QCompleter.PopupCompletion)
-        self.setCompleter(completer)
+class InfraccionComboBox(BaseComboBox):
+    pass
 
-    def actualizar_items(self, nuevos_items):
-        self.clear()
-        for id_valor, codigo in nuevos_items:
-            self.addItem(codigo, id_valor)
-                
-        nuevo_modelo = [item[1] for item in nuevos_items]
-        self.completer().model().setStringList(nuevo_modelo)
-        self.setCurrentIndex(-1)
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.showPopup()
-
-class TipoComboBox(QComboBox):
-    def __init__(self, items_with_ids, parent=None):
-        super().__init__(parent)
-        self.setEditable(True)
-
-        if items_with_ids == None:
-            return
-
-        for id_valor, codigo in items_with_ids:
-            self.addItem(codigo, id_valor)
-        
-        self.lineEdit().setPlaceholderText("Buscar opción...")
-        self.setCurrentIndex(-1)
-
-    def actualizar_items(self, nuevos_items):
-        self.clear()
-        for id_valor, codigo in nuevos_items:
-            self.addItem(codigo, id_valor)
-                
-        self.setCurrentIndex(-1)
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.showPopup()
-
-class SubtipoComboBox(QComboBox):
-    def __init__(self, items_with_ids, parent=None):
-        super().__init__(parent)
-        self.setEditable(True)
-
-        if items_with_ids == None:
-            return
-
-        for id_valor, codigo in items_with_ids:
-            self.addItem(codigo, id_valor)
-        
-        self.lineEdit().setPlaceholderText("No hay subtipos")
-        self.setCurrentIndex(-1)
-
-    def actualizar_items(self, nuevos_items):
-        self.clear()
-        for id_valor, codigo in nuevos_items:
-            self.addItem(codigo, id_valor)
-                
-        self.setCurrentIndex(-1)
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.showPopup()
-
-class InfraccionComboBox(QComboBox):
-    def __init__(self, items_with_ids, parent=None):
-        super().__init__(parent)
-        self.setEditable(True)
-
-        codigos = [item[1] for item in items_with_ids]
-        
-        for id_valor, codigo in items_with_ids:
-            self.addItem(codigo, id_valor)
-        
-        self.lineEdit().setPlaceholderText("Buscar opción...")
-        self.setCurrentIndex(-1)
-
-        completer = QCompleter(codigos, self)
-        completer.setFilterMode(Qt.MatchContains)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        completer.setCompletionMode(QCompleter.PopupCompletion)
-        self.setCompleter(completer)
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.showPopup()
+class CatalogoComboBox(BaseComboBox):
+    pass
 
 class SelectorInfracciones(QWidget):
     def __init__(self, items_callback):
         super().__init__()
         layout = QVBoxLayout(self)
-        
         layout.addWidget(QLabel("Posible Infracción"))
+        
         self.combo = InfraccionComboBox(items_callback())
         layout.addWidget(self.combo)
 
@@ -169,12 +95,11 @@ class SelectorInfracciones(QWidget):
 
     def agregar(self):
         id_inf = self.combo.currentData()
-        if id_inf in self.ids_seleccionados:
-            return QMessageBox.warning(self, "Aviso", "Ya agregada")
-        
-        if id_inf:
+        if id_inf and id_inf not in self.ids_seleccionados:
             self.ids_seleccionados.append(id_inf)
             self.lista.addItem(self.combo.currentText())
+        elif id_inf in self.ids_seleccionados:
+            QMessageBox.warning(self, "Aviso", MSG_INFRACCION_AGREGADA)
 
     def quitar(self):
         fila = self.lista.currentRow()
@@ -192,34 +117,8 @@ class LabeledWidget(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(QLabel(label_text))
+        layout.addWidget(widget)
         self.widget = widget
-        layout.addWidget(self.widget)
-
-class CatalogoComboBox(QComboBox):
-    def __init__(self, items_with_ids, parent=None):
-        super().__init__(parent)
-        self.setEditable(True)
-
-        codigos = [item[1] for item in items_with_ids]
-        
-        for id_valor, codigo in items_with_ids:
-            self.addItem(codigo, id_valor)
-        
-        self.lineEdit().setPlaceholderText("Buscar opción...")
-        self.setCurrentIndex(-1)
-
-        completer = QCompleter(codigos, self)
-        completer.setFilterMode(Qt.MatchContains)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        completer.setCompletionMode(QCompleter.PopupCompletion)
-        self.setCompleter(completer)
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.showPopup()
-
-from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QDateEdit, QComboBox
-from PySide6.QtCore import QDate
 
 class SelectorFechaMes(QGroupBox):
     def __init__(self):
@@ -228,11 +127,11 @@ class SelectorFechaMes(QGroupBox):
         self.edit_fecha = QDateEdit(QDate.currentDate())
         self.edit_fecha.setCalendarPopup(True)
         self.combo_mes = QComboBox()
-
-        for i in range(1, 13): self.combo_mes.addItem(str(i), i)
-        
+        for i in range(1, 13):
+            self.combo_mes.addItem(str(i), i)
         layout.addWidget(self.combo_mes)
         layout.addWidget(self.edit_fecha)
+
 
 class FormularioBusqueda(QWidget):
     def __init__(self, parent=None):
@@ -245,41 +144,41 @@ class FormularioBusqueda(QWidget):
 
         self.box_bus = QGroupBox("Búsqueda")
         lay_bus = QGridLayout(self.box_bus)
-        
-        self.combo_memo = MemoComboBox(catalogo_documentos(1))
+        self.combo_memo = MemoComboBox([(None, "- Seleccionar Memo -")] + catalogo_documentos(1))
         self.combo_prov = CatalogoComboBox(catalogo_proveedores())
         self.combo_unid = CatalogoComboBox(catalogo_unidades())
         self.txt_codigo = QLineEdit()
         self.txt_codigo.setPlaceholderText("Ej: PAS-2023...")
 
-        campos = [
+        campos_bus = [
             ("Memo:", self.combo_memo),
             ("Proveedor:", self.combo_prov),
             ("Unidad:", self.combo_unid),
             ("Código:", self.txt_codigo)
         ]
-        for i, (txt, widget) in enumerate(campos):
+        for i, (txt, widget) in enumerate(campos_bus):
             lay_bus.addWidget(QLabel(txt), i, 0)
             lay_bus.addWidget(widget, i, 1)
 
         self.box_fil = QGroupBox("Filtros")
         lay_fil = QGridLayout(self.box_fil)
-
         self.combo_tipo = TipoComboBox(catalogo_tipos())
         self.combo_sub = SubtipoComboBox([])
         self.combo_est = QComboBox()
-        self.combo_est.addItems(["", "INICIADO", "En actuacion previa"])
-        
+        self.combo_est.addItems(ESTADOS_COMBO)
         self.date_desde = QDateEdit(QDate.currentDate().addMonths(-1))
         self.date_hasta = QDateEdit(QDate.currentDate().addDays(1))
-        for d in [self.date_desde, self.date_hasta]: d.setCalendarPopup(True)
+        for d in [self.date_desde, self.date_hasta]:
+            d.setCalendarPopup(True)
 
-        filtros = [
-            ("Tipo:", self.combo_tipo), ("Subtipo:", self.combo_sub),
-            ("Estado:", self.combo_est), ("Desde:", self.date_desde),
+        campos_fil = [
+            ("Tipo:", self.combo_tipo),
+            ("Subtipo:", self.combo_sub),
+            ("Estado:", self.combo_est),
+            ("Desde:", self.date_desde),
             ("Hasta:", self.date_hasta)
         ]
-        for i, (txt, widget) in enumerate(filtros):
+        for i, (txt, widget) in enumerate(campos_fil):
             lay_fil.addWidget(QLabel(txt), i, 0)
             lay_fil.addWidget(widget, i, 1)
 
@@ -287,9 +186,11 @@ class FormularioBusqueda(QWidget):
         layout.addWidget(self.box_bus)
         layout.addWidget(self.box_fil)
         layout.addWidget(self.btn_limpiar)
+    
+    def actualizar_combos(self):
+        self.combo_memo._setup_items([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
 
     def obtener_filtros(self):
-        """Devuelve un diccionario con todos los valores actuales"""
         return {
             "memo": self.combo_memo.currentData(),
             "proveedor": self.combo_prov.currentData(),
@@ -304,13 +205,18 @@ class FormularioBusqueda(QWidget):
 
     def limpiar(self):
         self.blockSignals(True)
-        
         for combo in self.findChildren(QComboBox):
             combo.setCurrentIndex(-1)
-        
         for edit in self.findChildren(QLineEdit):
             edit.clear()
-            
-        self.combo_est.setCurrentIndex(0) 
-        
+        self.combo_est.setCurrentIndex(0)
         self.blockSignals(False)
+
+        self.blockSignals(True)
+        for combo in self.findChildren(QComboBox):
+            combo.setCurrentIndex(-1)
+        for edit in self.findChildren(QLineEdit):
+            edit.clear()
+        self.combo_est.setCurrentIndex(0)
+        self.blockSignals(False)
+

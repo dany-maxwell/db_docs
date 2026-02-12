@@ -1,36 +1,20 @@
-from db.connection import get_connection
+from services.db_helper import ejecutar_query
 
 def busqueda_por_memo(id_memo):
-    con = get_connection()
-    cur = con.cursor()
-
-    cur.execute("""
-                select * from v_info_tramite_por_memo
-                where id = %s;                
-                """, (id_memo,))
-
-    dato = cur.fetchone()
-    con.close()
-
-    return dato
+    query = "select * from v_info_tramite_por_memo where id = %s"
+    return ejecutar_query(query, (id_memo,), fetch_one=True)
 
 def busqueda_id_memo_por_documento(id_documento):
-    con = get_connection()
-    cur = con.cursor()
-
-    cur.execute("""
-                select mem.id from documento mem
-                join tramite t on mem.tramite_id = t.id
-                where t.id = (select t.id from tramite t
-				                join documento d on t.id = d.tramite_id
-				                where d.id = %s)
-                and mem.tipo_documento_id = 1; 
-                """, (id_documento,))
-    
-    dato = cur.fetchone()
-    
-    con.close()
-    return dato[0] if dato else None
+    query = """
+        select mem.id from documento mem
+        join tramite t on mem.tramite_id = t.id
+        where t.id = (select t.id from tramite t
+            join documento d on t.id = d.tramite_id
+            where d.id = %s)
+        and mem.tipo_documento_id = 1
+    """
+    result = ejecutar_query(query, (id_documento,), fetch_one=True)
+    return result[0] if result else None
 
 def busqueda_documentos_avanzada(
     memo=None,
@@ -43,52 +27,29 @@ def busqueda_documentos_avanzada(
     fecha_desde=None,
     fecha_hasta=None
 ):
-    con = get_connection()
-    cur = con.cursor()
-
     query = "select * from v_busqueda_avanzada where 1=1"
     params = []
 
-    if memo:
-        query += " and memo_id = %s"
-        params.append(memo)
+    filtros = [
+        (memo, " and memo_id = %s"),
+        (proveedor, " and proveedor_id = %s"),
+        (unidad, " and unidad_id = %s"),
+        (tipo, " and tipo_id = %s"),
+        (subtipo, " and subtipo_id = %s"),
+        (estado, " and estado = %s"),
+        (codigo, " and codigo ilike %s"),
+        (fecha_desde, " and fecha >= %s"),
+        (fecha_hasta, " and fecha <= %s"),
+    ]
 
-    if proveedor:
-        query += " and proveedor_id = %s"
-        params.append(proveedor)
-
-    if unidad:
-        query += " and unidad_id = %s"
-        params.append(unidad)
-
-    if tipo:
-        query += " and tipo_id = %s"
-        params.append(tipo)
-
-    if subtipo:
-        query += " and subtipo_id = %s"
-        params.append(subtipo)
-
-    if estado:
-        query += " and estado = %s"
-        params.append(estado)
-
-    if codigo:
-        query += " and codigo ilike %s"
-        params.append(f"%{codigo}%")
-
-    if fecha_desde:
-        query += " and fecha >= %s"
-        params.append(fecha_desde)
-
-    if fecha_hasta:
-        query += " and fecha <= %s"
-        params.append(fecha_hasta)
+    for valor, condicion in filtros:
+        if valor:
+            query += condicion
+            params.append(f"%{valor}%" if "ilike" in condicion else valor)
 
     query += " order by documento_id desc"
+    return ejecutar_query(query, params, fetch_all=True)
 
-    cur.execute(query, params)
-    datos = cur.fetchall()
-
-    con.close()
-    return datos
+def busqueda_info_proveedor(id_proveedor):
+    query = "select * from proveedor where id = %s"
+    return ejecutar_query(query, (id_proveedor,), fetch_one=True)

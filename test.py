@@ -1,3 +1,4 @@
 from services.busqueda_service import busqueda_documentos_avanzada, busqueda_por_memo
+from services.catalogo_service import catalogo_documentos
 
-print(busqueda_por_memo(id_memo=2))
+print(catalogo_documentos(4))

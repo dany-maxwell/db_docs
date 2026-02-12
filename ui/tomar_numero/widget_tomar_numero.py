@@ -10,22 +10,29 @@ from .tab_rpas import TabResolucion
 
 
 class WidgetTomarNumero(QWidget):
-
     def __init__(self):
         super().__init__()
 
         layout = QVBoxLayout()
 
-        tabs = QTabWidget()
+        self.tabs = QTabWidget()
 
-        tabs.addTab(TabActuacionPrevia(), "Actuación Previa")
-        tabs.addTab(TabInformeAP(), "Informe AP")
-        tabs.addTab(TabProvidencia(), "Providencias")
-        tabs.addTab(TabActoInicio(), "Acto de Inicio")
-        tabs.addTab(TabInformeJuridico(), "Informe Juridico")
-        tabs.addTab(TabDictamen(), "Dictamen")
-        tabs.addTab(TabResolucion(), "Resolución")
+        self.tabs.addTab(TabActuacionPrevia(), "Actuación Previa")
+        self.tabs.addTab(TabInformeAP(), "Informe AP")
+        self.tabs.addTab(TabProvidencia(), "Providencias")
+        self.tabs.addTab(TabActoInicio(), "Acto de Inicio")
+        self.tabs.addTab(TabInformeJuridico(), "Informe Juridico")
+        self.tabs.addTab(TabDictamen(), "Dictamen")
+        self.tabs.addTab(TabResolucion(), "Resolución")
 
-        layout.addWidget(tabs)
+        layout.addWidget(self.tabs)
 
         self.setLayout(layout)
+    
+    def actualizar_combos(self):
+        for i in range(self.tabs.count()):
+            tab = self.tabs.widget(i)
+            if hasattr(tab, 'filtrar_origen_custom'):
+                tab.filtrar_origen_custom()
+            if hasattr(tab, 'actualizar_combos'):
+                tab.actualizar_combos()
