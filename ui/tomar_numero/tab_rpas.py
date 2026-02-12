@@ -10,7 +10,6 @@ class TabResolucion(BaseTabDocumento):
     def __init__(self):
         super().__init__()
 
-        # Origen
         self.box_origen = QGroupBox("Acto de Inicio Correspondiente")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox(catalogo_documentos(TIPO_DOCUMENTO_AI))
@@ -18,11 +17,9 @@ class TabResolucion(BaseTabDocumento):
         self.box_origen.setLayout(lay_origen)
         self.layout.addWidget(self.box_origen)
         
-        # Botón
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         self.layout.addWidget(self.button_tomar_numero)
         
-        # Eventos
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
         self.combo_memos.currentIndexChanged.connect(
             lambda: self.filtrar_origen(TIPO_DOCUMENTO_AI)
@@ -34,7 +31,6 @@ class TabResolucion(BaseTabDocumento):
 
 
     def actualizar_combos_extra(self):
-        # No combos secundarios a refrescar
         pass
 
     def tomar_numero(self):

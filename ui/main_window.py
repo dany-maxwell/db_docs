@@ -22,15 +22,13 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.tabs)
 
-        # Configura aquí tu DSN y el nombre del canal que usas en tu trigger/NOTIFY de PostgreSQL
         self.pg_listener = PgNotifyListener(
-            channel="canal_documentos"  # <--- Cambia por el nombre de tu canal
+            channel="canal_documentos" 
         )
         self.pg_listener.notify_received.connect(self.on_db_update)
         self.pg_listener.start()
     
     def on_db_update(self, payload):
-        # Refresca todos los widgets principales al recibir notificación
         for i in range(self.tabs.count()):
             widget = self.tabs.widget(i)
             if hasattr(widget, 'actualizar_combos'):

@@ -10,7 +10,6 @@ class TabInformeAP(BaseTabDocumento):
     def __init__(self):
         super().__init__()
         
-        # Origen
         box_origen = QGroupBox("Actuacion Previa Correspondiente")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox(catalogo_documentos(TIPO_DOCUMENTO_AP))
@@ -18,7 +17,6 @@ class TabInformeAP(BaseTabDocumento):
         box_origen.setLayout(lay_origen)
         self.layout.addWidget(box_origen)
         
-        # Tipo
         box_tipo = QGroupBox("Tipo de Informe de Actuación Previa")
         lay_tipo = QVBoxLayout()
         self.combo_iap = TipoComboBox(catalogo_subtipos(SUBTIPO_IAP))
@@ -26,11 +24,9 @@ class TabInformeAP(BaseTabDocumento):
         box_tipo.setLayout(lay_tipo)
         self.layout.addWidget(box_tipo)
         
-        # Botón
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         self.layout.addWidget(self.button_tomar_numero)
         
-        # Conectar eventos
         self.combo_memos.currentIndexChanged.connect(
             lambda: self.filtrar_origen(TIPO_DOCUMENTO_AP)
         )

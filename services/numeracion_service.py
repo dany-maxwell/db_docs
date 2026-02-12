@@ -62,6 +62,9 @@ def crear_documento_con_numeracion(
     }
 
 def agregar_infraccion(doc_id, infraccion_id):
-    print(f"Agregando infracción {infraccion_id} al documento {doc_id}")
     query = "select agregar_infraccion_a_documento(%s, %s)"
     ejecutar_query(query, (doc_id, infraccion_id), commit=True)
+
+def aplicar_inpugnacion(codigo_impugnacion, fecha_impugnacion, tramite_id, documento_id):
+    query = "select aplicar_impugnacion(%s, %s, %s, %s)"
+    ejecutar_query(query, (codigo_impugnacion, fecha_impugnacion, tramite_id, documento_id), commit=True)

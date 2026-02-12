@@ -25,7 +25,8 @@ def busqueda_documentos_avanzada(
     estado=None,
     codigo=None,
     fecha_desde=None,
-    fecha_hasta=None
+    fecha_hasta=None,
+    archivado=None
 ):
     query = "select * from v_busqueda_avanzada where 1=1"
     params = []
@@ -40,6 +41,7 @@ def busqueda_documentos_avanzada(
         (codigo, " and codigo ilike %s"),
         (fecha_desde, " and fecha >= %s"),
         (fecha_hasta, " and fecha <= %s"),
+        (archivado, " and archivado = %s"),
     ]
 
     for valor, condicion in filtros:

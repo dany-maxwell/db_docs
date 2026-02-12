@@ -10,13 +10,11 @@ class TabActuacionPrevia(BaseTabDocumento):
 
     def __init__(self):
         super().__init__()
-        # Botón
         self.button_tomar_numero = QPushButton("Tomar Numero AP")
-        self.layout.addWidget(self.button_tomar_numero)        # Conectar eventos
+        self.layout.addWidget(self.button_tomar_numero)       
         self.button_tomar_numero.clicked.connect(self.tomar_numero)
     
     def actualizar_combos_extra(self):
-            # No combos secundarios a refrescar
             pass
     
     def tomar_numero(self):

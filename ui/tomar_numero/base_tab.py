@@ -8,8 +8,6 @@ from constants import UNIDAD_CODIGO_DEFAULT, MSG_NUMERO_TOMADO
 
 
 class BaseTabDocumento(QWidget):
-    """Clase base compartida por todos los tabs de tomar número"""
-    
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
@@ -21,7 +19,6 @@ class BaseTabDocumento(QWidget):
         self.filtrar_origen_custom()
     
     def _setup_memo_box(self):
-        """Crea la sección de Memorando común a todos los tabs"""
         box_memo = QGroupBox("Memorando de Petición de PAS")
         lay_memo = QVBoxLayout()
         
@@ -39,7 +36,6 @@ class BaseTabDocumento(QWidget):
         self.combo_memos.currentIndexChanged.connect(self.mostrar_proveedor)
     
     def mostrar_proveedor(self):
-        """Muestra el proveedor del memorando seleccionado"""
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             self.label_proveedor.setText("")
@@ -48,7 +44,6 @@ class BaseTabDocumento(QWidget):
         self.label_proveedor.setText(proveedor)
     
     def filtrar_origen(self, tipo_doc_id, subtipo_doc_id=None):
-        """Filtra origen según el memo seleccionado y limpia si no hay documentos."""
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             new_items = catalogo_documentos(tipo_doc_id, subtipo_doc_id)
@@ -60,20 +55,18 @@ class BaseTabDocumento(QWidget):
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
     
     def filtrar_mem(self):
-        """Filtra memo según origen seleccionado y mantiene selección de origen."""
         id_tramite = self.combo_origen.currentData()
         if not id_tramite:
             return
         id_memo = busqueda_id_memo_por_documento(id_tramite)
-        # Guardar selección actual de combo_origen
+
         idx_origen = self.combo_origen.currentIndex()
-        # Actualizar combo_memos sin desconectar señales
         self.combo_memos.blockSignals(True)
         self.combo_memos.actualizar_index(id_memo)
         self.combo_memos.blockSignals(False)
-        # Actualizar proveedor explícitamente
+
         self.mostrar_proveedor()
-        # Restaurar selección de combo_origen si es posible
+
         if idx_origen >= 0:
             self.combo_origen.setCurrentIndex(idx_origen)
     
@@ -86,12 +79,10 @@ class BaseTabDocumento(QWidget):
         self.actualizar_combos_extra()
 
     def actualizar_combos_extra(self):
-        """Hook para que los tabs hijos refresquen combos/lists secundarios."""
         pass
     
     def crear_documento(self, tipo_documento_id, subtipo_documento_id=None, 
                        documento_origen_id=None):
-        """Crea un documento con numeración"""
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             QMessageBox.warning(self, "Error", "Selecciona un memorando")

@@ -29,6 +29,5 @@ def get_connection():
     finally:
         _get_pool().putconn(conn)
 
-# Para casos donde se necesita una conexión persistente (ej: listener)
 def get_raw_connection():
     return _get_pool().getconn()

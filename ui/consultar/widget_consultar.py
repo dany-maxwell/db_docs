@@ -66,7 +66,6 @@ class WidgetConsultar(QWidget):
         self.cargar_tabla(datos)
 
     def actualizar_combos(self):
-            # Refresca la tabla de consulta
         self.filtros.actualizar_combos()
         self.buscar()
 

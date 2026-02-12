@@ -12,7 +12,7 @@ class PgNotifyListener(QObject):
 
     def __init__(self, channel):
            super().__init__()
-           self.channel = channel  # <--- Aquí pones el nombre del canal que usas en tu NOTIFY
+           self.channel = channel  
            self._stop_event = threading.Event()
            self._thread = threading.Thread(target=self._listen, daemon=True)
 

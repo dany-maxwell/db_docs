@@ -12,7 +12,6 @@ class TabProvidencia(BaseTabDocumento):
     def __init__(self):
         super().__init__()
 
-        # Radio buttons para modo
         self.radio_ap = QRadioButton("En Actuación Previa")
         self.radio_instr = QRadioButton("En Instrucción")
         self.radio_res = QRadioButton("En Resolución")
@@ -24,7 +23,6 @@ class TabProvidencia(BaseTabDocumento):
         radios.addWidget(self.radio_res)
         self.layout.insertLayout(0, radios)
 
-        # Origen (dinámico según modo)
         self.box_origen = QGroupBox("")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox([])
@@ -32,7 +30,6 @@ class TabProvidencia(BaseTabDocumento):
         self.box_origen.setLayout(lay_origen)
         self.layout.addWidget(self.box_origen)
 
-        # Tipo (para modo Instrucción)
         self.box_tipo = QGroupBox("Tipo")
         lay_tipo = QVBoxLayout()
         self.combo_tipo = TipoComboBox([])
@@ -41,7 +38,6 @@ class TabProvidencia(BaseTabDocumento):
         self.layout.addWidget(self.box_tipo)
         self.box_tipo.hide()
 
-        # Fecha (para modo Resolución)
         self.box_fecha = QGroupBox()
         layout_fecha = QHBoxLayout()
 
@@ -67,11 +63,9 @@ class TabProvidencia(BaseTabDocumento):
         self.layout.addWidget(self.box_fecha)
         self.box_fecha.hide()
 
-        # Botón
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         self.layout.addWidget(self.button_tomar_numero)
 
-        # Eventos
         self.radio_ap.toggled.connect(self.cambiar_modo)
         self.radio_instr.toggled.connect(self.cambiar_modo)
         self.radio_res.toggled.connect(self.cambiar_modo)
@@ -120,7 +114,6 @@ class TabProvidencia(BaseTabDocumento):
     
 
     def actualizar_combos_extra(self):
-        # Refresca combos de tipo y limpia campos
         self.combo_tipo.clear()
         self.combo_mes.setCurrentIndex(0)
         self.edit_fecha.setDate(QDate.currentDate())
@@ -134,7 +127,7 @@ class TabProvidencia(BaseTabDocumento):
             id_subtipo = SUBTIPO_PR_AP
         elif self.radio_instr.isChecked():
             id_subtipo = self.combo_tipo.currentData()
-        else:  # radio_res
+        else: 
             id_subtipo = SUBTIPO_PR_RES
         
         self.crear_documento(TIPO_DOCUMENTO_PR, subtipo_documento_id=id_subtipo,

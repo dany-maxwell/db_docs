@@ -19,7 +19,6 @@ class WidgetCrearTramite(QWidget):
     def setup_ui(self):
         layout = QVBoxLayout()
         
-        # Proveedor
         box_proveedor = QGroupBox("Selecciona Proveedor")
         lay_prov = QVBoxLayout()
         self.combo_proveedores = CatalogoComboBox(catalogo_proveedores())
@@ -37,7 +36,6 @@ class WidgetCrearTramite(QWidget):
         box_proveedor.setLayout(lay_prov)
         layout.addWidget(box_proveedor)
         
-        # Datos
         box_datos = QGroupBox("Datos")
         lay_datos = QVBoxLayout()
         
@@ -54,7 +52,6 @@ class WidgetCrearTramite(QWidget):
         lay_datos.addLayout(lay_servicio)
         box_datos.setLayout(lay_datos)
         
-        # Trámite
         box_tramite = QGroupBox("Trámite")
         lay_tramite = QVBoxLayout()
         
@@ -101,7 +98,6 @@ class WidgetCrearTramite(QWidget):
             self.labels_prov["provincia"].setText("Provincia: -")
 
     def actualizar_combos(self):
-            # Refresca combos principales
             self.combo_proveedores._setup_items(catalogo_proveedores())
             self.combo_unidad._setup_items(catalogo_unidades())
 

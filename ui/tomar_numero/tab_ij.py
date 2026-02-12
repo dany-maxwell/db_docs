@@ -10,7 +10,6 @@ class TabInformeJuridico(BaseTabDocumento):
     def __init__(self):
         super().__init__()
         
-        # Tipo IJ
         box_ij = QGroupBox("Tipo de Informe Jurídico")
         lay_ij = QVBoxLayout()
         self.combo_ij = TipoComboBox(catalogo_subtipos(SUBTIPO_IJ))
@@ -18,7 +17,6 @@ class TabInformeJuridico(BaseTabDocumento):
         box_ij.setLayout(lay_ij)
         self.layout.addWidget(box_ij)
         
-        # Origen
         self.box_origen = QGroupBox("Acto de Inicio Correspondiente")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox(catalogo_documentos(TIPO_DOCUMENTO_AI))
@@ -27,11 +25,9 @@ class TabInformeJuridico(BaseTabDocumento):
         self.layout.addWidget(self.box_origen)
         self.box_origen.hide()
         
-        # Botón
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         self.layout.addWidget(self.button_tomar_numero)
         
-        # Conectar eventos
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
         self.combo_memos.currentIndexChanged.connect(
             lambda: self.filtrar_origen(TIPO_DOCUMENTO_AI)

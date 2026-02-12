@@ -10,7 +10,6 @@ from constants import TIPO_DOCUMENTO_IAP, MSG_YA_AGREGADO, TIPO_DOCUMENTO_AI
 class TabActoInicio(BaseTabDocumento):
     def __init__(self):
         super().__init__()
-        # Origen
         box_origen = QGroupBox("Informe FINAL de Actuación Previa")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox(catalogo_documentos(TIPO_DOCUMENTO_IAP, 2))
@@ -18,7 +17,6 @@ class TabActoInicio(BaseTabDocumento):
         box_origen.setLayout(lay_origen)
         self.layout.addWidget(box_origen)
         
-        # Infracciones
         box_inf = QGroupBox("Infracciones")
         lay_inf = QVBoxLayout()
         self.combo_inf = InfraccionComboBox(catalogo_infracciones())
@@ -36,13 +34,11 @@ class TabActoInicio(BaseTabDocumento):
         box_inf.setLayout(lay_inf)
         self.layout.addWidget(box_inf)
         
-        # Botón
         self.button_tomar_numero = QPushButton("Tomar Numero AI")
         self.layout.addWidget(self.button_tomar_numero)
         
         self.infracciones_seleccionadas = []
         
-        # Conectar eventos
         self.combo_memos.currentIndexChanged.connect(
             lambda: self.filtrar_origen(TIPO_DOCUMENTO_IAP, 2)
         )
@@ -74,14 +70,13 @@ class TabActoInicio(BaseTabDocumento):
     
 
     def actualizar_combos_extra(self):
-        # Refresca infracciones y limpia selección
         self.combo_inf._setup_items(catalogo_infracciones())
         self.list_inf.clear()
         self.infracciones_seleccionadas.clear()
         
     def tomar_numero(self):
         id_origen = self.combo_origen.currentData()
-        infracciones_a_guardar = list(self.infracciones_seleccionadas)  # Copia local
+        infracciones_a_guardar = list(self.infracciones_seleccionadas)
         resultado = self.crear_documento(TIPO_DOCUMENTO_AI, documento_origen_id=id_origen)
         if resultado:
             for inf in infracciones_a_guardar:
