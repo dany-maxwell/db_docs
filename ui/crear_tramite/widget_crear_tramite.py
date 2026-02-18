@@ -5,7 +5,7 @@ from PySide6.QtCore import QDate
 from ui.widgets import CatalogoComboBox
 from services.catalogo_service import catalogo_unidades, catalogo_proveedores
 from services.busqueda_service import busqueda_info_proveedor
-from services.numeracion_service import crear_tramite
+from services.auditoria_service import crear_tramite
 from constants import ESTADO_POR_DEFECTO, FORMATO_FECHA, MSG_TRAMITE_INICIADO
 
 

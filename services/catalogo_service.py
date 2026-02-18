@@ -34,6 +34,9 @@ def catalogo_documentos_tramite(id_tramite):
     """
     return ejecutar_query(query, (id_tramite,), fetch_all=True)
 
+def catalogo_reporte():
+    return ejecutar_query("select * from v_reporte_tramites", fetch_all=True)
+
 @lru_cache(maxsize=32)
 def catalogo_tipos():
     return ejecutar_query("select id, nombre from tipo_documento", fetch_all=True)

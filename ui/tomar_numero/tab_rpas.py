@@ -1,8 +1,11 @@
 from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout
 
+from services.busqueda_service import busqueda_por_memo
+
 from .base_tab import BaseTabDocumento
 from ui.widgets import OrigenComboBox
 from services.catalogo_service import catalogo_documentos
+from services.auditoria_service import actualizar_estado
 from constants import TIPO_DOCUMENTO_AI, TIPO_DOCUMENTO_RPAS
 
 
@@ -34,7 +37,10 @@ class TabResolucion(BaseTabDocumento):
         pass
 
     def tomar_numero(self):
+        tramite_id = busqueda_por_memo(id_memo=self.combo_memos.currentData())
         id_origen = self.combo_origen.currentData()
         if not id_origen:
             return
         self.crear_documento(TIPO_DOCUMENTO_RPAS, documento_origen_id=id_origen)
+
+        actualizar_estado(5, tramite_id[2])

@@ -13,7 +13,7 @@ from services.busqueda_service import (
     busqueda_por_memo,
     busqueda_por_memo)
 
-from services.numeracion_service import (
+from services.auditoria_service import (
     aplicar_inpugnacion)
 class WidgetImpugnacion(QWidget):
     def __init__(self):
@@ -95,7 +95,6 @@ class WidgetImpugnacion(QWidget):
         item = self.list_documentos.currentItem()
         if item:
             id_doc = item.data(Qt.UserRole)
-            print(f"Documento seleccionado: {id_doc}")
 
     def confirmar_impugnacion(self):  
         id_memo = self.combo_memos.currentData()

@@ -1,7 +1,7 @@
 """Constantes de la aplicación"""
 
 # Estados
-ESTADO_POR_DEFECTO = "Estado Por Defecto"
+ESTADO_POR_DEFECTO = "PETICIÓN PAS PENDIENTE"
 ESTADO_INICIADO = "INICIADO"
 ESTADO_AP = "En actuacion previa"
 

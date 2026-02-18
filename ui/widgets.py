@@ -8,7 +8,6 @@ from services.catalogo_service import (
 from constants import MSG_INFRACCION_AGREGADA, ESTADOS_COMBO
 
 class BaseComboBox(QComboBox):
-    """Base class for custom combo boxes with search and autocomplete"""
     DEFAULT_INDEX = -1
     PLACEHOLDER = "Buscar opción..."
     
@@ -166,7 +165,7 @@ class FormularioBusqueda(QWidget):
         self.combo_sub = SubtipoComboBox([])
         self.combo_est = QComboBox()
         self.combo_est.addItems(ESTADOS_COMBO)
-        self.date_desde = QDateEdit(QDate.currentDate().addMonths(-1))
+        self.date_desde = QDateEdit(QDate.currentDate().addYears(-10))
         self.date_hasta = QDateEdit(QDate.currentDate().addDays(1))
         for d in [self.date_desde, self.date_hasta]:
             d.setCalendarPopup(True)

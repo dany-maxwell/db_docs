@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMessageBox, QGroupB
 from ui.widgets import MemoComboBox
 from services.catalogo_service import catalogo_documentos
 from services.busqueda_service import busqueda_por_memo, busqueda_id_memo_por_documento
-from services.numeracion_service import crear_documento_con_numeracion
+from services.auditoria_service import crear_documento_con_numeracion
 from constants import UNIDAD_CODIGO_DEFAULT, MSG_NUMERO_TOMADO
 
 

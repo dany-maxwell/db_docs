@@ -8,7 +8,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 from services.busqueda_service import busqueda_documentos_avanzada
-from services.catalogo_service import catalogo_subtipos
+from services.catalogo_service import catalogo_subtipos, catalogo_reporte
 from ui.widgets import FormularioBusqueda
 from constants import HEADER_LABELS_CONSULTAR, INDICES_DB_CONSULTAR, MSG_EXCEL_EXPORTADO, MSG_TITULO_RESUMEN
 
@@ -34,10 +34,15 @@ class WidgetConsultar(QWidget):
         self.tabla.setHorizontalHeaderLabels(HEADER_LABELS_CONSULTAR)
         self.tabla.horizontalHeader().setStretchLastSection(True)
         self.tabla.setAlternatingRowColors(True)
+        self.tabla.setEditTriggers(QTableWidget.NoEditTriggers)
         
-        self.btn_excel = QPushButton("Exportar a Excel")
+        self.botoneslayout = QHBoxLayout()
+        self.btn_excel = QPushButton("Exportar Tabla Actual")
+        self.btn_reporte = QPushButton("Generar Reporte")
+        self.botoneslayout.addWidget(self.btn_excel)
+        self.botoneslayout.addWidget(self.btn_reporte)
         derecha.addWidget(self.tabla)
-        derecha.addWidget(self.btn_excel)
+        derecha.addLayout(self.botoneslayout)
         layout.addLayout(derecha)
 
     def conectar_eventos(self):
@@ -52,6 +57,7 @@ class WidgetConsultar(QWidget):
         self.filtros.btn_limpiar.clicked.connect(self.buscar)
         self.filtros.combo_tipo.currentIndexChanged.connect(self.actualizar_subtipos)
         self.btn_excel.clicked.connect(self.exportar_excel)
+        self.btn_reporte.clicked.connect(self.exportar_reporte)
 
     def disparar_busqueda(self):
         self.timer_busqueda.start(400)
@@ -150,3 +156,37 @@ class WidgetConsultar(QWidget):
             )
             ws.column_dimensions[column_cells[0].column_letter].width = max_len + 2
 
+    def exportar_reporte(self):
+        ruta, _ = QFileDialog.getSaveFileName(
+            self, "Guardar Excel", "reporte_tramites.xlsx", "Excel (*.xlsx)"
+        )
+        if not ruta:
+            return
+
+        wb = Workbook()
+
+        datos = catalogo_reporte()
+        ws = wb.active
+        ws.title = "Reporte Trámites"
+
+        headers = [
+            "N° Trámite", "Presunto Responsable", "Cedula - Ruc", "Unidad", "Memorando Petición PAS", "Fecha Memorando Petición PAS", "Petición Razonada",
+            "Fecha Petición Razonada", "Informe Técnico", "Fecha Informe Técnico", "Asunto", "N° Actuación Previa", "Fecha Actuación Previa", 
+            "N° Informe de Actuación Previa", "Fecha Informe Actuación Previa", "N° Informe Final de Actuación Previa", "Fecha Informe Final Actuación Previa",
+            "Procede", "Acto de Inicio", "Fecha Acto de Inicio", "Posible Infracción", "Informe Juridico", "Dictamen", "Fecha Dictamen", "Resoulución", "Fecha Resolución", "Estado"
+        ]
+        ws.append(headers)
+
+        for row in datos:
+            ws.append(row)
+
+        for col in ws.columns:
+            max_length = 0
+            col_letter = col[0].column_letter
+            for cell in col:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            ws.column_dimensions[col_letter].width = max_length + 2  
+
+        wb.save(ruta)
+        QMessageBox.information(self, "Exportado", MSG_EXCEL_EXPORTADO)

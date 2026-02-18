@@ -68,3 +68,22 @@ def agregar_infraccion(doc_id, infraccion_id):
 def aplicar_inpugnacion(codigo_impugnacion, fecha_impugnacion, tramite_id, documento_id):
     query = "select aplicar_impugnacion(%s, %s, %s, %s)"
     ejecutar_query(query, (codigo_impugnacion, fecha_impugnacion, tramite_id, documento_id), commit=True)
+
+def prosigue_tramite (prosigue, tramite_id):
+    query= "select prosigue_tramite(%s, %s)"
+    ejecutar_query(query, (prosigue, tramite_id), commit=True)
+
+def actualizar_estado (estado, tramite_id):
+    estados = {
+        1 : "PETICIÓN PAS PENDIENTE",
+        2 : "REQUIERE ACTUACION PREVIA",
+        3 : "EN ACTUACIÓN PREVIA",
+        4 : "EN INSTRUCCIÓN",
+        5 : "EN RESOLUCIÓN",
+        6 : "RESUELTO"
+    }
+
+    estado_txt = estados.get(estado)
+    query= "select actualizar_estado_tramite(%s, %s)"
+
+    ejecutar_query(query, (estado_txt, tramite_id), commit=True)

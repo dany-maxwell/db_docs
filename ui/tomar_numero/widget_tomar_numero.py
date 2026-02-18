@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTabWidget
 
+from .tab_mem import TabMem
 from .tab_ap import TabActuacionPrevia
 from .tab_iap import TabInformeAP
 from .tab_pr import TabProvidencia
@@ -17,6 +18,7 @@ class WidgetTomarNumero(QWidget):
 
         self.tabs = QTabWidget()
 
+        self.tabs.addTab(TabMem(), "(provicional)")
         self.tabs.addTab(TabActuacionPrevia(), "Actuación Previa")
         self.tabs.addTab(TabInformeAP(), "Informe AP")
         self.tabs.addTab(TabProvidencia(), "Providencias")

@@ -3,10 +3,9 @@ from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QHBoxLayout, 
 from .base_tab import BaseTabDocumento
 from ui.widgets import OrigenComboBox, InfraccionComboBox
 from services.catalogo_service import catalogo_documentos, catalogo_infracciones
-from services.numeracion_service import agregar_infraccion
+from services.busqueda_service import busqueda_por_memo
+from services.auditoria_service import agregar_infraccion, actualizar_estado
 from constants import TIPO_DOCUMENTO_IAP, MSG_YA_AGREGADO, TIPO_DOCUMENTO_AI
-
-
 class TabActoInicio(BaseTabDocumento):
     def __init__(self):
         super().__init__()
@@ -67,7 +66,6 @@ class TabActoInicio(BaseTabDocumento):
         if fila >= 0:
             self.list_inf.takeItem(fila)
             del self.infracciones_seleccionadas[fila]
-    
 
     def actualizar_combos_extra(self):
         self.combo_inf._setup_items(catalogo_infracciones())
@@ -75,6 +73,7 @@ class TabActoInicio(BaseTabDocumento):
         self.infracciones_seleccionadas.clear()
         
     def tomar_numero(self):
+        id_tramite = busqueda_por_memo(id_memo=self.combo_memos.currentData())
         id_origen = self.combo_origen.currentData()
         infracciones_a_guardar = list(self.infracciones_seleccionadas)
         resultado = self.crear_documento(TIPO_DOCUMENTO_AI, documento_origen_id=id_origen)
@@ -83,3 +82,5 @@ class TabActoInicio(BaseTabDocumento):
                 agregar_infraccion(resultado["id"], inf)
             self.infracciones_seleccionadas.clear()
             self.list_inf.clear()
+
+        actualizar_estado(4, id_tramite[2])
