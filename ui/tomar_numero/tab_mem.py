@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QMessageBox, 
 from .base_tab import BaseTabDocumento
 
 from services.busqueda_service import busqueda_por_memo
-from services.auditoria_service import actualizar_estado
+from services.auditoria_service import actualizar_estado, añadir_observacion
 
 class TabMem(BaseTabDocumento):
     def __init__(self):
@@ -47,8 +47,9 @@ class TabMem(BaseTabDocumento):
         elif self.radio_requiereap.isChecked():
             actualizar_estado(2, id_tramite)
     
+        añadir_observacion(self.text_razon.toPlainText(), id_tramite)
         QMessageBox.information(self, "Éxito", "El memo ha sido procesado exitosamente.")
-
+    
     def finalizar_tramite(self):
         id_tramite = busqueda_por_memo(self.combo_memos.currentData())[2]
         actualizar_estado(6, id_tramite)

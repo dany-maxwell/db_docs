@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout
+from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QTextEdit
 
 from .base_tab import BaseTabDocumento
 from ui.widgets import OrigenComboBox, TipoComboBox
@@ -25,6 +25,14 @@ class TabInformeJuridico(BaseTabDocumento):
         self.layout.addWidget(self.box_origen)
         self.box_origen.hide()
         
+        self.box_asunto = QGroupBox("Asunto")
+        lay_asunto = QVBoxLayout()
+        self.text_asunto = QTextEdit()
+        lay_asunto.addWidget(self.text_asunto)
+        self.box_asunto.setLayout(lay_asunto)
+        self.layout.addWidget(self.box_asunto)
+        self.box_asunto.hide()
+
         self.button_tomar_numero = QPushButton("Tomar Numero IAP")
         self.layout.addWidget(self.button_tomar_numero)
         
@@ -41,15 +49,15 @@ class TabInformeJuridico(BaseTabDocumento):
     def mostrar_origen(self):
         idx_tipo = self.combo_ij.currentIndex()
         self.box_origen.setVisible(idx_tipo == 0)
-
+        self.box_asunto.setVisible(idx_tipo == 1 or idx_tipo == 2)
 
     def actualizar_combos_extra(self):
         self.combo_ij._setup_items(catalogo_subtipos(SUBTIPO_IJ))
     
     def tomar_numero(self):
-        id_origen = self.combo_origen.currentData()
-        if not id_origen:
-            return
+        id_origen = self.combo_origen.currentData() if self.combo_origen.isVisible() else None
+        asunto = self.text_asunto.toPlainText() if self.text_asunto.isVisible() else None
+
         id_subtipo = self.combo_ij.currentData()
         self.crear_documento(TIPO_DOCUMENTO_IJ, subtipo_documento_id=id_subtipo,
-                           documento_origen_id=id_origen)
+                           documento_origen_id=id_origen, asunto=asunto)

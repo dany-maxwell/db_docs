@@ -9,6 +9,8 @@ def catalogo_proveedores():
 def catalogo_unidades():
     return ejecutar_query("select id, codigo from unidad order by id", fetch_all=True)
 
+def catalogo_servicios():
+    return ejecutar_query("select id, nombre from servicio order by nombre", fetch_all=True)
 
 def catalogo_documentos(id_tipo, id_subtipo=None, id_tramite=None):
     query = "select id, codigo_final from documento where tipo_documento_id = %s"

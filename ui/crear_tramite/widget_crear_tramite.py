@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox, QHBoxLay
 from PySide6.QtCore import QDate
 
 from ui.widgets import CatalogoComboBox
-from services.catalogo_service import catalogo_unidades, catalogo_proveedores
+from services.catalogo_service import catalogo_unidades, catalogo_proveedores, catalogo_servicios
 from services.busqueda_service import busqueda_info_proveedor
 from services.auditoria_service import crear_tramite
 from constants import ESTADO_POR_DEFECTO, FORMATO_FECHA, MSG_TRAMITE_INICIADO
@@ -47,7 +47,7 @@ class WidgetCrearTramite(QWidget):
         
         lay_servicio = QHBoxLayout()
         lay_servicio.addWidget(QLabel("Servicio: "))
-        self.combo_servicio = CatalogoComboBox([])
+        self.combo_servicio = CatalogoComboBox(catalogo_servicios())
         lay_servicio.addWidget(self.combo_servicio)
         lay_datos.addLayout(lay_servicio)
         box_datos.setLayout(lay_datos)
@@ -108,6 +108,7 @@ class WidgetCrearTramite(QWidget):
         resultado = crear_tramite(
             proveedor_id=self.combo_proveedores.currentData(),
             unidad_id=self.combo_unidad.currentData(),
+            servicio_id=self.combo_servicio.currentData(),
             estado=ESTADO_POR_DEFECTO,
             fecha_tramite=QDate.currentDate().toString(FORMATO_FECHA),
             asunto=self.line_asunto.toPlainText(),

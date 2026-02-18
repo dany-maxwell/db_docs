@@ -3,6 +3,7 @@ from services.db_helper import ejecutar_query
 def crear_tramite(
     proveedor_id,
     unidad_id,
+    servicio_id,
     estado,
     fecha_tramite,
     asunto,
@@ -13,10 +14,10 @@ def crear_tramite(
     codigo_informe=None,
     fecha_informe=None
 ):
-    query = "select crear_tramite(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    query = "select crear_tramite(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     result = ejecutar_query(
         query,
-        (proveedor_id, unidad_id, estado, fecha_tramite, asunto, 
+        (proveedor_id, unidad_id, servicio_id, estado, fecha_tramite, asunto, 
          codigo_memo, fecha_memo, codigo_peticion, fecha_peticion, 
          codigo_informe, fecha_informe),
         fetch_one=True,
@@ -40,13 +41,14 @@ def crear_documento_con_numeracion(
     unidad_codigo,
     codigo_manual=None,
     subtipo_documento_id=None,
-    documento_origen_id=None
+    documento_origen_id=None,
+    asunto=None
 ):
-    query = "select crear_documento(%s, %s, %s, %s, %s, %s)"
+    query = "select crear_documento(%s, %s, %s, %s, %s, %s, %s)"
     result = ejecutar_query(
         query,
         (tramite_id, tipo_documento_id, subtipo_documento_id,
-         documento_origen_id, codigo_manual, unidad_codigo),
+         documento_origen_id, codigo_manual, unidad_codigo, asunto),
         fetch_one=True,
         commit=True
     )
@@ -72,6 +74,10 @@ def aplicar_inpugnacion(codigo_impugnacion, fecha_impugnacion, tramite_id, docum
 def prosigue_tramite (prosigue, tramite_id):
     query= "select prosigue_tramite(%s, %s)"
     ejecutar_query(query, (prosigue, tramite_id), commit=True)
+
+def añadir_observacion(observacion, tramite_id):
+    query= "update tramite set observacion = %s where id = %s"
+    ejecutar_query(query, (observacion, tramite_id), commit=True)
 
 def actualizar_estado (estado, tramite_id):
     estados = {

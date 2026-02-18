@@ -82,7 +82,7 @@ class BaseTabDocumento(QWidget):
         pass
     
     def crear_documento(self, tipo_documento_id, subtipo_documento_id=None, 
-                       documento_origen_id=None):
+                       documento_origen_id=None, asunto=None):
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             QMessageBox.warning(self, "Error", "Selecciona un memorando")
@@ -94,7 +94,8 @@ class BaseTabDocumento(QWidget):
             subtipo_documento_id=subtipo_documento_id,
             documento_origen_id=documento_origen_id,
             codigo_manual=None,
-            unidad_codigo=UNIDAD_CODIGO_DEFAULT
+            unidad_codigo=UNIDAD_CODIGO_DEFAULT,
+            asunto=asunto
         )
         
         QMessageBox.information(
