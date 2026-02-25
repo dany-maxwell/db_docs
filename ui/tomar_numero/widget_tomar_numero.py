@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTabWidget
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 
+from ui.lazy_tab_widget import LazyTabWidget
 from .tab_mem import TabMem
 from .tab_ap import TabActuacionPrevia
 from .tab_iap import TabInformeAP
@@ -16,16 +17,17 @@ class WidgetTomarNumero(QWidget):
 
         layout = QVBoxLayout()
 
-        self.tabs = QTabWidget()
+        self.tabs = LazyTabWidget()
 
-        self.tabs.addTab(TabMem(), "(provicional)")
-        self.tabs.addTab(TabActuacionPrevia(), "Actuación Previa")
-        self.tabs.addTab(TabInformeAP(), "Informe AP")
-        self.tabs.addTab(TabProvidencia(), "Providencias")
-        self.tabs.addTab(TabActoInicio(), "Acto de Inicio")
-        self.tabs.addTab(TabInformeJuridico(), "Informe Juridico")
-        self.tabs.addTab(TabDictamen(), "Dictamen")
-        self.tabs.addTab(TabResolucion(), "Resolución")
+        # Añadir tabs con lazy loading
+        self.tabs.add_lazy_tab(TabMem, "(provicional)")
+        self.tabs.add_lazy_tab(TabActuacionPrevia, "Actuación Previa")
+        self.tabs.add_lazy_tab(TabInformeAP, "Informe AP")
+        self.tabs.add_lazy_tab(TabProvidencia, "Providencias")
+        self.tabs.add_lazy_tab(TabActoInicio, "Acto de Inicio")
+        self.tabs.add_lazy_tab(TabInformeJuridico, "Informe Juridico")
+        self.tabs.add_lazy_tab(TabDictamen, "Dictamen")
+        self.tabs.add_lazy_tab(TabResolucion, "Resolución")
 
         layout.addWidget(self.tabs)
 
@@ -33,8 +35,9 @@ class WidgetTomarNumero(QWidget):
     
     def actualizar_combos(self):
         for i in range(self.tabs.count()):
-            tab = self.tabs.widget(i)
-            if hasattr(tab, 'filtrar_origen_custom'):
-                tab.filtrar_origen_custom()
-            if hasattr(tab, 'actualizar_combos'):
-                tab.actualizar_combos()
+            tab = self.tabs.get_tab_widget(i)
+            if tab:
+                if hasattr(tab, 'filtrar_origen_custom'):
+                    tab.filtrar_origen_custom()
+                if hasattr(tab, 'actualizar_combos'):
+                    tab.actualizar_combos()
