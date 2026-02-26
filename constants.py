@@ -46,31 +46,3 @@ MSG_EXCEL_EXPORTADO = "Excel generado correctamente"
 MSG_TITULO_RESUMEN = "RESUMEN DEL TRÁMITE"
 MSG_NUMERO_TOMADO = "Número tomado"
 MSG_YA_AGREGADO = "Ya agregaste esa infracción"
-
-# ========================
-# CONFIGURACIÓN DE LAZY LOADING
-# ========================
-# Para mejorar el tiempo de carga inicial de la aplicación,
-# se implementó un sistema de lazy loading que carga los tabs
-# (pestañas) solo cuando el usuario hace click en ellas.
-#
-# Esto significa que:
-# - La aplicación se abre instantáneamente
-# - Solo se cargan los datos necesarios cuando el usuario navega
-# - Las consultas a la base de datos se ejecutan bajo demanda
-#
-# Los tabs con lazy loading son:
-# 1. Crear Trámite
-# 2. Tomar Número (con 8 sub-tabs internos)
-# 3. Consultar
-# 4. Impugnación
-#
-# Ventajas:
-# + Tiempo de carga inicial drasticamente reducido
-# + Menor consumo de memoria al inicio
-# + Mejor experiencia de usuario
-# + Mejor rendimiento general de la aplicación
-#
-# Si necesitas cargar todos los tabs manualmente en algún punto,
-# puedes usar: main_window.tabs.load_all_tabs()
-LAZY_LOADING_ENABLED = True

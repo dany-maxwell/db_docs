@@ -1,5 +1,5 @@
 from db.connection import get_connection
-import os
+import os, time
 import psycopg2
 from dotenv import load_dotenv
 import threading
@@ -23,24 +23,31 @@ class PgNotifyListener(QObject):
         self._stop_event.set()
 
     def _listen(self):
-            conn = psycopg2.connect(
-                dbname=os.getenv("DB_NAME"),
-                user=os.getenv("DB_USER"),
-                password=os.getenv("DB_PASSWORD"),
-                host=os.getenv("DB_HOST"),
-                port=os.getenv("DB_PORT")
-            )
-            conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-            cur = conn.cursor()
-            cur.execute(f"LISTEN {self.channel};")
+        while not self._stop_event.is_set():
+            conn = None
+            try:
+                conn = psycopg2.connect(
+                    dbname=os.getenv("DB_NAME"),
+                    user=os.getenv("DB_USER"),
+                    password=os.getenv("DB_PASSWORD"),
+                    host=os.getenv("DB_HOST"),
+                    port=os.getenv("DB_PORT")
+                )
+                conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+                cur = conn.cursor()
+                cur.execute(f"LISTEN {self.channel};")
 
-            while not self._stop_event.is_set():
-                if select.select([conn], [], [], 1) == ([], [], []):
-                    continue
+                while not self._stop_event.is_set():
+                    if select.select([conn], [], [], 1) == ([], [], []):
+                        continue
 
-                conn.poll()
-                while conn.notifies:
-                    notify = conn.notifies.pop(0)
-                    self.notify_received.emit(notify.payload)
-            cur.close()
-            conn.close()
+                    conn.poll()
+                    while conn.notifies:
+                        notify = conn.notifies.pop(0)
+                        self.notify_received.emit(notify.payload)
+            except (psycopg2.OperationalError, Exception) as e:
+                time.sleep(5)
+            finally:
+                if conn:
+                    cur.close()
+                    conn.close()

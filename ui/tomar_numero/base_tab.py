@@ -1,5 +1,5 @@
 """Clase base para tabs de tomar número"""
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMessageBox, QGroupBox
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMessageBox, QGroupBox, QSizePolicy
 from ui.widgets import MemoComboBox
 from services.catalogo_service import catalogo_documentos
 from services.busqueda_service import busqueda_por_memo, busqueda_id_memo_por_documento
@@ -25,6 +25,7 @@ class BaseTabDocumento(QWidget):
         self.combo_memos = MemoComboBox(
             [(None, "- Sin Seleccionar -")] + catalogo_documentos(1)
         )
+        self.combo_memos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         lay_memo.addWidget(self.combo_memos)
         lay_memo.addWidget(QLabel("Proveedor:"))
         

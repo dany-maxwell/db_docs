@@ -13,6 +13,9 @@ class BaseComboBox(QComboBox):
     
     def __init__(self, items_with_ids=None, parent=None, with_completer=True):
         super().__init__(parent)
+        self.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.setMinimumContentsLength(20)
+        self.setMaximumWidth(300)
         self.setEditable(True)
         self.with_completer = with_completer
         if items_with_ids:
