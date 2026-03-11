@@ -15,6 +15,7 @@ class TabInformeJuridico(BaseTabDocumento):
         box_ij = QGroupBox("Tipo de Informe Jurídico")
         lay_ij = QVBoxLayout()
         self.combo_ij = TipoComboBox(catalogo_subtipos(SUBTIPO_IJ))
+        self.combo_ij.setEditable(False)
         lay_ij.addWidget(self.combo_ij)
         box_ij.setLayout(lay_ij)
         self.layout.addWidget(box_ij)
@@ -35,7 +36,7 @@ class TabInformeJuridico(BaseTabDocumento):
         self.layout.addWidget(self.box_asunto)
         self.box_asunto.hide()
 
-        self.button_tomar_numero = QPushButton("Tomar Numero IAP")
+        self.button_tomar_numero = QPushButton("Tomar Numero Informe Juridico")
         self.layout.addWidget(self.button_tomar_numero)
         
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)

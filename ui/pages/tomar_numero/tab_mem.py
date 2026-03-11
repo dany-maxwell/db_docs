@@ -4,7 +4,7 @@ from .base_tab import BaseTabDocumento
 from services.busqueda_service import busqueda_por_memo
 from services.auditoria_service import actualizar_estado, añadir_observacion
 
-from ui.widgets.widgets import RadioExclusivoDeseleccionable
+from ui.widgets.widgets import RadioCustom
 
 class TabMem(BaseTabDocumento):
     def __init__(self):
@@ -16,8 +16,8 @@ class TabMem(BaseTabDocumento):
         self.layout_estado = QVBoxLayout()
 
         self.lay_h = QHBoxLayout()
-        self.radio_devolver = RadioExclusivoDeseleccionable("¿Devuelve el memo?")
-        self.radio_requiereap = RadioExclusivoDeseleccionable("¿Requiere Actuación Previa?")
+        self.radio_devolver = RadioCustom("¿Devuelve el memo?")
+        self.radio_requiereap = RadioCustom("¿Requiere Actuación Previa?")
         self.lay_h.addWidget(self.radio_devolver)
         self.lay_h.addWidget(self.radio_requiereap)
         self.layout_estado.addLayout(self.lay_h)
@@ -45,7 +45,7 @@ class TabMem(BaseTabDocumento):
         self.btn_cerrar.clicked.connect(self.finalizar_tramite)
 
     def acceptar_memo(self):
-        id_tramite = busqueda_por_memo(self.combo_memos.currentData())[2]
+        id_tramite = busqueda_por_memo(self.combo_memos.currentData())[5]
         if self.radio_devolver.isChecked():
             actualizar_estado(6, id_tramite)
         elif self.radio_requiereap.isChecked():
@@ -55,7 +55,7 @@ class TabMem(BaseTabDocumento):
         QMessageBox.information(self, "Éxito", "El memo ha sido procesado exitosamente.")
     
     def finalizar_tramite(self):
-        id_tramite = busqueda_por_memo(self.combo_memos.currentData())[2]
+        id_tramite = busqueda_por_memo(self.combo_memos.currentData())[5]
         actualizar_estado(6, id_tramite)
         QMessageBox.information(self, "Éxito", "El trámite ha sido cerrado exitosamente.")
         

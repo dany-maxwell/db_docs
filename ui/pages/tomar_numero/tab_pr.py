@@ -34,7 +34,8 @@ class TabProvidencia(BaseTabDocumento):
 
         self.box_tipo = QGroupBox("Tipo")
         lay_tipo = QVBoxLayout()
-        self.combo_tipo = TipoComboBox([])
+        self.combo_tipo = TipoComboBox(catalogo_subtipos(SUBTIPO_PR_INSTR))
+        self.combo_tipo.setEditable(False)
         lay_tipo.addWidget(self.combo_tipo)
         self.box_tipo.setLayout(lay_tipo)
         self.layout.addWidget(self.box_tipo)
@@ -65,7 +66,7 @@ class TabProvidencia(BaseTabDocumento):
         self.layout.addWidget(self.box_fecha)
         self.box_fecha.hide()
 
-        self.button_tomar_numero = QPushButton("Tomar Numero IAP")
+        self.button_tomar_numero = QPushButton("Tomar Numero Providencias")
         self.layout.addWidget(self.button_tomar_numero)
 
         self.radio_ap.toggled.connect(self.cambiar_modo)
@@ -96,8 +97,6 @@ class TabProvidencia(BaseTabDocumento):
             self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
             self.combo_origen.actualizar_items(items)
             self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
-            tipo_items = catalogo_subtipos(SUBTIPO_PR_INSTR)
-            self.combo_tipo.actualizar_items(tipo_items)
             self.box_tipo.show()
             self.box_fecha.hide()
         

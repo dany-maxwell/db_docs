@@ -20,7 +20,7 @@ class TabDictamen(BaseTabDocumento):
         box_origen.setLayout(lay_origen)
         self.layout.addWidget(box_origen)
         
-        self.button_tomar_numero = QPushButton("Tomar Numero IAP")
+        self.button_tomar_numero = QPushButton("Tomar Numero Dictamen")
         self.layout.addWidget(self.button_tomar_numero)
         
         self.combo_memos.currentIndexChanged.connect(

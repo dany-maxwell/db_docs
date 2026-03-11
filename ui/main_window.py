@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QMainWindow, QTabWidget
 from db.pg_listener import PgNotifyListener
-from ui.pages.crear_tramite.widget_crear_tramite import WidgetCrearTramite
-from ui.pages.tomar_numero.widget_tomar_numero import WidgetTomarNumero
-from ui.pages.consultar.widget_consultar import WidgetConsultar
-from ui.pages.inpugnacion.widget_impugnacion import WidgetImpugnacion
+from ui.pages.crear_tramite.ui_crear_tramite import WidgetCrearTramite
+from ui.pages.tomar_numero.ui_tomar_numero import WidgetTomarNumero
+from ui.pages.consultar.ui_consultar import WidgetConsultar
+from ui.pages.inpugnacion.ui_impugnacion import WidgetImpugnacion
 
 
 class MainWindow(QMainWindow):

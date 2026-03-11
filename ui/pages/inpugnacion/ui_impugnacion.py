@@ -44,11 +44,12 @@ class WidgetImpugnacion(QWidget):
 
         box_memo = QGroupBox("Memorando de Petición de PAS")
         lay_memo = QVBoxLayout()
-        self.combo_memos = MemoComboBox([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        self.combo_memos = MemoComboBox([(None, "")] + catalogo_documentos(1))
         lay_memo.addWidget(self.combo_memos)
-        lay_memo.addWidget(QLabel("Proveedor:"))
-        self.label_proveedor = QLabel("")
+        self.label_proveedor = QLabel("Proveedor: ")
         lay_memo.addWidget(self.label_proveedor)
+        self.label_cedula = QLabel("Cedula/Ruc: ")
+        lay_memo.addWidget(self.label_cedula)
 
         box_memo.setLayout(lay_memo)
         layout.addWidget(box_memo)
@@ -75,12 +76,14 @@ class WidgetImpugnacion(QWidget):
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
         if not id_memo:
-            self.label_proveedor.setText("")
+            self.label_proveedor.setText("Proveedor: ")
+            self.label_cedula.setText("Cedula/Ruc: ")
             return
-        proveedor = busqueda_por_memo(id_memo)[0]
-        self.label_proveedor.setText(proveedor)
+        info_memo = busqueda_por_memo(id_memo)
+        self.label_proveedor.setText(f"Proveedor: {info_memo[2]}")
+        self.label_cedula.setText(f"Cedula/Ruc: {info_memo[3]}")
     def actualizar_combos(self):
-            self.combo_memos._setup_items([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+            self.combo_memos._setup_items([(None, "")] + catalogo_documentos(1))
             self.list_documentos.clear()
             
     def cargar_documentos(self):
@@ -88,7 +91,7 @@ class WidgetImpugnacion(QWidget):
         if not id_memo:
             self.list_documentos.clear()
             return
-        documentos = catalogo_documentos_tramite(busqueda_por_memo(id_memo)[2])
+        documentos = catalogo_documentos_tramite(busqueda_por_memo(id_memo)[5])
         for d in documentos:
             item = QListWidgetItem(f"{d[0]} - {d[1]} - {d[2]} - {d[3]}")
             item.setData(Qt.UserRole, d[4])
@@ -123,7 +126,7 @@ class WidgetImpugnacion(QWidget):
 
     def aplicar_impugnacion(self):
         id_memo = self.combo_memos.currentData()
-        id_tramite = busqueda_por_memo(id_memo)[2] if id_memo else None
+        id_tramite = busqueda_por_memo(id_memo)[5] if id_memo else None
         codigo = self.line_impugnacion.text()
         fecha = self.date_impugnacion.date().toString("yyyy-MM-dd")
         id_documento = self.list_documentos.currentItem().data(Qt.UserRole) if self.list_documentos.currentItem() else None

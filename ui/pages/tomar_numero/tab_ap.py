@@ -22,4 +22,4 @@ class TabActuacionPrevia(BaseTabDocumento):
     def tomar_numero(self):
         tramite_id = busqueda_por_memo(id_memo=self.combo_memos.currentData())
         self.crear_documento(TIPO_DOCUMENTO_AP, documento_origen_id=self.combo_memos.currentData())
-        actualizar_estado(3, tramite_id[2])
+        actualizar_estado(3, tramite_id[5])

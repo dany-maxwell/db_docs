@@ -20,7 +20,7 @@ class TabResolucion(BaseTabDocumento):
         self.box_origen.setLayout(lay_origen)
         self.layout.addWidget(self.box_origen)
         
-        self.button_tomar_numero = QPushButton("Tomar Numero IAP")
+        self.button_tomar_numero = QPushButton("Tomar Numero Resolución")
         self.layout.addWidget(self.button_tomar_numero)
         
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
@@ -43,4 +43,4 @@ class TabResolucion(BaseTabDocumento):
             return
         self.crear_documento(TIPO_DOCUMENTO_RPAS, documento_origen_id=id_origen)
 
-        actualizar_estado(5, tramite_id[2])
+        actualizar_estado(5, tramite_id[5])

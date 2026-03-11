@@ -23,6 +23,7 @@ class TabActoInicio(BaseTabDocumento):
         box_inf = QGroupBox("Infracciones")
         lay_inf = QVBoxLayout()
         self.combo_inf = InfraccionComboBox(catalogo_infracciones())
+        self.combo_inf.setEditable(False)
         lay_inf.addWidget(self.combo_inf)
         
         botones_inf = QHBoxLayout()
@@ -37,7 +38,7 @@ class TabActoInicio(BaseTabDocumento):
         box_inf.setLayout(lay_inf)
         self.layout.addWidget(box_inf)
         
-        self.button_tomar_numero = QPushButton("Tomar Numero AI")
+        self.button_tomar_numero = QPushButton("Tomar Numero Acto de Inicio")
         self.layout.addWidget(self.button_tomar_numero)
         
         self.infracciones_seleccionadas = []
@@ -87,4 +88,4 @@ class TabActoInicio(BaseTabDocumento):
             self.infracciones_seleccionadas.clear()
             self.list_inf.clear()
 
-        actualizar_estado(4, id_tramite[2])
+        actualizar_estado(4, id_tramite[5])

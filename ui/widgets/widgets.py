@@ -20,6 +20,8 @@ class BaseComboBox(QComboBox):
         self.with_completer = with_completer
         if items_with_ids:
             self._setup_items(items_with_ids)
+        self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
+        self.setCurrentIndex(self.DEFAULT_INDEX)
     
     def _setup_items(self, items):
         if not items:
@@ -30,10 +32,10 @@ class BaseComboBox(QComboBox):
         codigos = [item[1] for item in items]
         for id_valor, codigo in items:
             self.addItem(codigo, id_valor)
-        
+
         self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
         self.setCurrentIndex(self.DEFAULT_INDEX)
-        
+
         if self.with_completer:
             completer = QCompleter(codigos, self)
             completer.setFilterMode(Qt.MatchContains)
@@ -146,7 +148,7 @@ class FormularioBusqueda(QWidget):
 
         self.box_bus = QGroupBox("Búsqueda")
         lay_bus = QGridLayout(self.box_bus)
-        self.combo_memo = MemoComboBox([(None, "- Seleccionar Memo -")] + catalogo_documentos(1))
+        self.combo_memo = MemoComboBox([(None, "")] + catalogo_documentos(1))
         self.combo_prov = CatalogoComboBox(catalogo_proveedores())
         self.combo_unid = CatalogoComboBox(catalogo_unidades())
         self.txt_codigo = QLineEdit()
@@ -165,7 +167,9 @@ class FormularioBusqueda(QWidget):
         self.box_fil = QGroupBox("Filtros")
         lay_fil = QGridLayout(self.box_fil)
         self.combo_tipo = TipoComboBox(catalogo_tipos())
+        self.combo_tipo.setEditable(False)
         self.combo_sub = SubtipoComboBox([])
+        self.combo_sub.setEditable(False)
         self.combo_est = QComboBox()
         self.combo_est.addItems(ESTADOS_COMBO)
         self.date_desde = QDateEdit(QDate.currentDate().addYears(-10))
@@ -190,7 +194,7 @@ class FormularioBusqueda(QWidget):
         layout.addWidget(self.btn_limpiar)
     
     def actualizar_combos(self):
-        self.combo_memo._setup_items([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        self.combo_memo._setup_items([(None, "")] + catalogo_documentos(1))
         self.combo_prov._setup_items(catalogo_proveedores())
 
     def obtener_filtros(self):
@@ -223,7 +227,7 @@ class FormularioBusqueda(QWidget):
         self.combo_est.setCurrentIndex(0)
         self.blockSignals(False)
 
-class RadioExclusivoDeseleccionable(QRadioButton):
+class RadioCustom(QRadioButton):
     def mousePressEvent(self, event):
         if self.isChecked():
             self.setAutoExclusive(False)

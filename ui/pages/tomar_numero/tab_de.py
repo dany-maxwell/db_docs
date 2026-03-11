@@ -14,7 +14,7 @@ class TabDocumentoExtra(BaseTabDocumento):
 
     def ui (self):
         box_origen = QGroupBox('Documento "Origen": ')
-        lay_origen = QHBoxLayout()
+        lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox([])
         lay_origen.addWidget(self.combo_origen)
         self.label_origen = QLabel("Tipo Documento Origen: --")
@@ -26,9 +26,11 @@ class TabDocumentoExtra(BaseTabDocumento):
         lay_documento = QVBoxLayout()
 
         self.combo_tipos = TipoComboBox(catalogo_tipos_extra())
+        self.combo_tipos.setEditable(False)
         lay_documento.addWidget(self.combo_tipos)
         lay_documento.addWidget(QLabel('Tipo: '))
-        self.combo_subtipos = TipoComboBox(catalogo_documentos())
+        self.combo_subtipos = TipoComboBox([])
+        self.combo_subtipos.setEditable(False)
         lay_documento.addWidget(self.combo_subtipos)
 
         lay_datos = QHBoxLayout()

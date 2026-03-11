@@ -27,10 +27,11 @@ class BaseTabDocumento(QWidget):
         )
         self.combo_memos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         lay_memo.addWidget(self.combo_memos)
-        lay_memo.addWidget(QLabel("Proveedor:"))
         
-        self.label_proveedor = QLabel("")
+        self.label_proveedor = QLabel("Proveedor: ")
         lay_memo.addWidget(self.label_proveedor)
+        self.label_cedula = QLabel("Cedula/Ruc: ")
+        lay_memo.addWidget(self.label_cedula)
         box_memo.setLayout(lay_memo)
         self.layout.addWidget(box_memo)
         
@@ -39,17 +40,19 @@ class BaseTabDocumento(QWidget):
     def mostrar_proveedor(self):
         id_memo = self.combo_memos.currentData()
         if not id_memo:
-            self.label_proveedor.setText("")
+            self.label_proveedor.setText("Proveedor: ")
+            self.label_cedula.setText("Cedula/Ruc: ")
             return
-        proveedor = busqueda_por_memo(id_memo)[0]
-        self.label_proveedor.setText(proveedor)
+        info_memo = busqueda_por_memo(id_memo)
+        self.label_proveedor.setText(f"Proveedor: {info_memo[2]}")
+        self.label_cedula.setText(f"Cedula/Ruc: {info_memo[3]}")
     
     def filtrar_origen(self, tipo_doc_id, subtipo_doc_id=None):
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             new_items = catalogo_documentos(tipo_doc_id, subtipo_doc_id)
         else:
-            tramite = busqueda_por_memo(id_memo)[2]
+            tramite = busqueda_por_memo(id_memo)[5]
             new_items = catalogo_documentos(tipo_doc_id, subtipo_doc_id, tramite)
         self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_origen.actualizar_items(new_items)
@@ -75,7 +78,7 @@ class BaseTabDocumento(QWidget):
         pass
 
     def actualizar_combos(self):
-        self.combo_memos._setup_items([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        self.combo_memos._setup_items([(None, "")] + catalogo_documentos(1))
         self.filtrar_origen_custom()
         self.actualizar_combos_extra()
 
@@ -90,7 +93,7 @@ class BaseTabDocumento(QWidget):
             return None
         
         resultado = crear_documento_con_numeracion(
-            tramite_id=busqueda_por_memo(id_memo)[2],
+            tramite_id=busqueda_por_memo(id_memo)[5],
             tipo_documento_id=tipo_documento_id,
             subtipo_documento_id=subtipo_documento_id,
             documento_origen_id=documento_origen_id,
