@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QHBoxLayout, QMessageBox, QListWidget
 
 from .base_tab import BaseTabDocumento
-from ui.widgets import OrigenComboBox, InfraccionComboBox
+from ui.widgets.widgets import OrigenComboBox, InfraccionComboBox
 from services.catalogo_service import catalogo_documentos, catalogo_infracciones
 from services.busqueda_service import busqueda_por_memo
 from services.auditoria_service import agregar_infraccion, actualizar_estado
@@ -9,6 +9,10 @@ from constants import TIPO_DOCUMENTO_IAP, MSG_YA_AGREGADO, TIPO_DOCUMENTO_AI
 class TabActoInicio(BaseTabDocumento):
     def __init__(self):
         super().__init__()
+    
+        self.ui()
+
+    def ui (self):
         box_origen = QGroupBox("Informe FINAL de Actuación Previa")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox(catalogo_documentos(TIPO_DOCUMENTO_IAP, 2))
@@ -74,7 +78,7 @@ class TabActoInicio(BaseTabDocumento):
         
     def tomar_numero(self):
         id_tramite = busqueda_por_memo(id_memo=self.combo_memos.currentData())
-        id_origen = self.combo_origen.currentData()
+        id_origen = self.combo_memos.currentData()
         infracciones_a_guardar = list(self.infracciones_seleccionadas)
         resultado = self.crear_documento(TIPO_DOCUMENTO_AI, documento_origen_id=id_origen)
         if resultado:

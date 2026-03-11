@@ -2,17 +2,20 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox, QHBoxLay
                                 QLineEdit, QDateEdit, QPushButton, QTextEdit, QMessageBox)
 from PySide6.QtCore import QDate
 
-from ui.widgets import CatalogoComboBox
+from ui.widgets.widgets import CatalogoComboBox
 from services.catalogo_service import catalogo_unidades, catalogo_proveedores, catalogo_servicios
 from services.busqueda_service import busqueda_info_proveedor
 from services.auditoria_service import crear_tramite
 from constants import ESTADO_POR_DEFECTO, FORMATO_FECHA, MSG_TRAMITE_INICIADO
 
+from .widget_nuevo_proveedor import NuevoProveedor
 
 class WidgetCrearTramite(QWidget):
     def __init__(self):
         super().__init__()
         self.setup_ui()
+        self.nueva_ventana = None
+        self.button_add_prov.clicked.connect(self.abrir_form_nuevo)
         self.combo_proveedores.currentIndexChanged.connect(self.mostrar_datos_proveedor)
         self.button_iniciar_tramite.clicked.connect(self.iniciar_tramite)
 
@@ -21,8 +24,14 @@ class WidgetCrearTramite(QWidget):
         
         box_proveedor = QGroupBox("Selecciona Proveedor")
         lay_prov = QVBoxLayout()
+        lay_prob_ad = QHBoxLayout()
+
         self.combo_proveedores = CatalogoComboBox(catalogo_proveedores())
-        
+        self.button_add_prov = QPushButton('Añadir "Proveedor"')
+
+        lay_prob_ad.addWidget(self.combo_proveedores)
+        lay_prob_ad.addWidget(self.button_add_prov)
+
         self.labels_prov = {
             "nombre": QLabel("Nombre: -"),
             "cedula": QLabel("Cédula/Ruc: -"),
@@ -30,7 +39,7 @@ class WidgetCrearTramite(QWidget):
             "canton": QLabel("Canton: -"),
             "provincia": QLabel("Provincia: -")
         }
-        lay_prov.addWidget(self.combo_proveedores)
+        lay_prov.addLayout(lay_prob_ad)
         for label in self.labels_prov.values():
             lay_prov.addWidget(label)
         box_proveedor.setLayout(lay_prov)
@@ -82,6 +91,15 @@ class WidgetCrearTramite(QWidget):
         layout.addWidget(self.button_iniciar_tramite)
         self.setLayout(layout)
 
+    def abrir_form_nuevo(self):
+        if self.nueva_ventana is None:
+            self.nueva_ventana = NuevoProveedor()
+            self.nueva_ventana.show()
+        else:
+            self.nueva_ventana.activateWindow()
+            self.nueva_ventana.raise_()
+            self.nueva_ventana.show()
+
     def mostrar_datos_proveedor(self):
         id_proveedor = self.combo_proveedores.currentData()
         if not id_proveedor:
@@ -93,13 +111,23 @@ class WidgetCrearTramite(QWidget):
         if datos:
             self.labels_prov["nombre"].setText(f"Nombre: {datos[1]}")
             self.labels_prov["cedula"].setText(f"Cédula/Ruc: {datos[2]}")
-            self.labels_prov["ciudad"].setText("Ciudad: -")
-            self.labels_prov["canton"].setText("Canton: -")
-            self.labels_prov["provincia"].setText("Provincia: -")
+            self.labels_prov["ciudad"].setText(f"Ciudad: {datos[4]}")
+            self.labels_prov["canton"].setText(f"Canton: {datos[3]}")
+            self.labels_prov["provincia"].setText(f"Provincia: {datos[5]}")
+
+    def actualizar_proveedores(self):
+        self.actualizar_combos()
 
     def actualizar_combos(self):
-            self.combo_proveedores._setup_items(catalogo_proveedores())
-            self.combo_unidad._setup_items(catalogo_unidades())
+        self.combo_proveedores._setup_items(catalogo_proveedores())
+        self.combo_unidad._setup_items(catalogo_unidades())
+        self.docs["memo"]["line"].clear()
+        self.docs["memo"]["date"].setDate(QDate.currentDate())
+        self.docs["peticion"]["line"].clear()
+        self.docs["peticion"]["date"].setDate(QDate.currentDate())
+        self.docs["informe"]["line"].clear()
+        self.docs["informe"]["date"].setDate(QDate.currentDate())
+        self.line_asunto.clear()
 
     def iniciar_tramite(self):
         codigo_informe = self.docs["informe"]["line"].text().strip()

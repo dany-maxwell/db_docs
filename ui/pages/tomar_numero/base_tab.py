@@ -1,6 +1,6 @@
 """Clase base para tabs de tomar número"""
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMessageBox, QGroupBox, QSizePolicy
-from ui.widgets import MemoComboBox
+from ui.widgets.widgets import MemoComboBox
 from services.catalogo_service import catalogo_documentos
 from services.busqueda_service import busqueda_por_memo, busqueda_id_memo_por_documento
 from services.auditoria_service import crear_documento_con_numeracion
@@ -23,7 +23,7 @@ class BaseTabDocumento(QWidget):
         lay_memo = QVBoxLayout()
         
         self.combo_memos = MemoComboBox(
-            [(None, "- Sin Seleccionar -")] + catalogo_documentos(1)
+            [(None, "")] + catalogo_documentos(1)
         )
         self.combo_memos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         lay_memo.addWidget(self.combo_memos)
@@ -104,4 +104,3 @@ class BaseTabDocumento(QWidget):
             MSG_NUMERO_TOMADO,
             f"Código: {resultado['codigo']}\nFecha: {resultado['fecha']}"
         )
-        return resultado

@@ -63,6 +63,10 @@ def crear_documento_con_numeracion(
         "fecha": fecha
     }
 
+def anadir_documento_manual(tramite, codigo, fecha, tipo, subtipo, origen):
+    query = "call nuevo_documento(%s,%s,%s,%s,%s,%s)"
+    ejecutar_query(query, (tramite, codigo, fecha, tipo, subtipo, origen), commit=True)
+    
 def agregar_infraccion(doc_id, infraccion_id):
     query = "select agregar_infraccion_a_documento(%s, %s)"
     ejecutar_query(query, (doc_id, infraccion_id), commit=True)
@@ -93,3 +97,12 @@ def actualizar_estado (estado, tramite_id):
     query= "select actualizar_estado_tramite(%s, %s)"
 
     ejecutar_query(query, (estado_txt, tramite_id), commit=True)
+
+def crear_proveedor(nombre, cedula, canton, ciudad, provincia):
+    query="select nuevo_proveedor(%s, %s, %s, %s, %s)"
+    result = ejecutar_query(query, (nombre, cedula, canton, ciudad, provincia),fetch_one=True, commit=True)
+    
+    proveedor_id = result
+    query2="select nombre, cedula_ruc from proveedor where id = %s"
+    n_nombre, n_cedula = ejecutar_query(query2, proveedor_id, fetch_one=True, commit=True)
+    return n_nombre, n_cedula

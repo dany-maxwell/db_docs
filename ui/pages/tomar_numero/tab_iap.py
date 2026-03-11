@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QComboBox
 
 from .base_tab import BaseTabDocumento
-from ui.widgets import OrigenComboBox, TipoComboBox
+from ui.widgets.widgets import OrigenComboBox, TipoComboBox
 from services.catalogo_service import catalogo_documentos, catalogo_subtipos
 from services.busqueda_service import busqueda_por_memo
 from services.auditoria_service import prosigue_tramite
@@ -9,7 +9,9 @@ from constants import TIPO_DOCUMENTO_IAP, TIPO_DOCUMENTO_AP, SUBTIPO_IAP
 class TabInformeAP(BaseTabDocumento):
     def __init__(self):
         super().__init__()
-        
+        self.ui()
+    
+    def ui(self):
         box_origen = QGroupBox("Actuacion Previa Correspondiente")
         lay_origen = QVBoxLayout()
         self.combo_origen = OrigenComboBox(catalogo_documentos(TIPO_DOCUMENTO_AP))

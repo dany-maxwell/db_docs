@@ -16,6 +16,11 @@ def busqueda_id_memo_por_documento(id_documento):
     result = ejecutar_query(query, (id_documento,), fetch_one=True)
     return result[0] if result else None
 
+def busqueda_info_documento(id_documento):
+    query= "select id, codigo_final, tipo_documento_id, subtipo_documento_id, fecha_documento, documento_origen_id from documento where id = %s"
+    params = [id_documento]
+    return ejecutar_query(query, params, fetch_one=True)
+
 def busqueda_documentos_avanzada(
     memo=None,
     proveedor=None,

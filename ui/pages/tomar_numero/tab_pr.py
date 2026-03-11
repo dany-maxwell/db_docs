@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QDateEdit,
 from PySide6.QtCore import QDate
 
 from .base_tab import BaseTabDocumento
-from ui.widgets import OrigenComboBox, TipoComboBox
+from ui.widgets.widgets import OrigenComboBox, TipoComboBox
 from services.catalogo_service import catalogo_documentos, catalogo_subtipos
 from constants import (TIPO_DOCUMENTO_AP, TIPO_DOCUMENTO_AI, TIPO_DOCUMENTO_PR,
                        SUBTIPO_PR_AP, SUBTIPO_PR_INSTR, SUBTIPO_PR_RES)
@@ -11,7 +11,9 @@ from constants import (TIPO_DOCUMENTO_AP, TIPO_DOCUMENTO_AI, TIPO_DOCUMENTO_PR,
 class TabProvidencia(BaseTabDocumento):
     def __init__(self):
         super().__init__()
-
+        self.ui()
+    
+    def ui(self):
         self.radio_ap = QRadioButton("En Actuación Previa")
         self.radio_instr = QRadioButton("En Instrucción")
         self.radio_res = QRadioButton("En Resolución")

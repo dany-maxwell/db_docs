@@ -8,7 +8,7 @@ from .tab_ai import TabActoInicio
 from .tab_ij import TabInformeJuridico
 from .tab_d import TabDictamen
 from .tab_rpas import TabResolucion
-
+from .tab_de import TabDocumentoExtra
 
 class WidgetTomarNumero(QWidget):
     def __init__(self):
@@ -26,6 +26,7 @@ class WidgetTomarNumero(QWidget):
         self.tabs.addTab(TabInformeJuridico(), "Informe Juridico")
         self.tabs.addTab(TabDictamen(), "Dictamen")
         self.tabs.addTab(TabResolucion(), "Resolución")
+        self.tabs.addTab(TabDocumentoExtra(), "Extra (provicional)")
 
         layout.addWidget(self.tabs)
 

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (QComboBox, QHBoxLayout, QVBoxLayout, QListWidget,
                                 QCompleter, QMessageBox, QLabel, QPushButton, QWidget,
-                                QLineEdit, QGridLayout, QGroupBox, QDateEdit)
+                                QLineEdit, QGridLayout, QGroupBox, QDateEdit, QRadioButton)
 from PySide6.QtCore import Qt, QDate
 
 from services.catalogo_service import (
@@ -15,7 +15,7 @@ class BaseComboBox(QComboBox):
         super().__init__(parent)
         self.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
         self.setMinimumContentsLength(20)
-        self.setMaximumWidth(300)
+        self.setMaximumWidth(400)
         self.setEditable(True)
         self.with_completer = with_completer
         if items_with_ids:
@@ -191,6 +191,7 @@ class FormularioBusqueda(QWidget):
     
     def actualizar_combos(self):
         self.combo_memo._setup_items([(None, "- Sin Seleccionar -")] + catalogo_documentos(1))
+        self.combo_prov._setup_items(catalogo_proveedores())
 
     def obtener_filtros(self):
         return {
@@ -222,3 +223,11 @@ class FormularioBusqueda(QWidget):
         self.combo_est.setCurrentIndex(0)
         self.blockSignals(False)
 
+class RadioExclusivoDeseleccionable(QRadioButton):
+    def mousePressEvent(self, event):
+        if self.isChecked():
+            self.setAutoExclusive(False)
+            self.setChecked(False)
+            self.setAutoExclusive(True)
+        else:
+            super().mousePressEvent(event)

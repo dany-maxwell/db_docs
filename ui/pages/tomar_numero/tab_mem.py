@@ -4,16 +4,20 @@ from .base_tab import BaseTabDocumento
 from services.busqueda_service import busqueda_por_memo
 from services.auditoria_service import actualizar_estado, añadir_observacion
 
+from ui.widgets.widgets import RadioExclusivoDeseleccionable
+
 class TabMem(BaseTabDocumento):
     def __init__(self):
         super().__init__()
-        
+        self.ui()
+    
+    def ui(self):
         self.box_estado = QGroupBox()
         self.layout_estado = QVBoxLayout()
 
         self.lay_h = QHBoxLayout()
-        self.radio_devolver = QRadioButton("¿Devuelve el memo?")
-        self.radio_requiereap = QRadioButton("¿Requiere Actuación Previa?")
+        self.radio_devolver = RadioExclusivoDeseleccionable("¿Devuelve el memo?")
+        self.radio_requiereap = RadioExclusivoDeseleccionable("¿Requiere Actuación Previa?")
         self.lay_h.addWidget(self.radio_devolver)
         self.lay_h.addWidget(self.radio_requiereap)
         self.layout_estado.addLayout(self.lay_h)

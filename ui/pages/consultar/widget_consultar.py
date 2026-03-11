@@ -9,7 +9,7 @@ from openpyxl.styles import Font
 
 from services.busqueda_service import busqueda_documentos_avanzada
 from services.catalogo_service import catalogo_subtipos, catalogo_reporte
-from ui.widgets import FormularioBusqueda
+from ui.widgets.widgets import FormularioBusqueda
 from constants import HEADER_LABELS_CONSULTAR, INDICES_DB_CONSULTAR, MSG_EXCEL_EXPORTADO, MSG_TITULO_RESUMEN
 
 class WidgetConsultar(QWidget):
@@ -71,11 +71,13 @@ class WidgetConsultar(QWidget):
         datos = busqueda_documentos_avanzada(**params)
         self.cargar_tabla(datos)
 
+    def actualizar_proveedores(self):
+        self.filtros.actualizar_combos()
+
     def actualizar_combos(self):
         self.filtros.actualizar_combos()
         self.buscar()
 
-            
     def cargar_tabla(self, datos):
         self.tabla.setRowCount(0)
         self.tabla.setUpdatesEnabled(False)

@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox, QHBoxLay
                                QDateEdit, QPushButton, QTextEdit, QMessageBox, QListWidget, QListWidgetItem)
 from PySide6.QtCore import QDate, Qt
 
-from ui.widgets import (
+from ui.widgets.widgets import (
     MemoComboBox)
 
 from services.catalogo_service import (
@@ -18,7 +18,10 @@ from services.auditoria_service import (
 class WidgetImpugnacion(QWidget):
     def __init__(self):
         super().__init__()
+        
+        self.setup_ui()
 
+    def setup_ui(self):
         layout = QVBoxLayout()
 
         box_impugnacion = QGroupBox("Impugnacion")

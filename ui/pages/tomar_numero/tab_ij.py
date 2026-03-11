@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QTextEdit
 
 from .base_tab import BaseTabDocumento
-from ui.widgets import OrigenComboBox, TipoComboBox
+from ui.widgets.widgets import OrigenComboBox, TipoComboBox
 from services.catalogo_service import catalogo_documentos, catalogo_subtipos
 from constants import TIPO_DOCUMENTO_IJ, TIPO_DOCUMENTO_AI, SUBTIPO_IJ
 
@@ -9,7 +9,9 @@ from constants import TIPO_DOCUMENTO_IJ, TIPO_DOCUMENTO_AI, SUBTIPO_IJ
 class TabInformeJuridico(BaseTabDocumento):
     def __init__(self):
         super().__init__()
-        
+        self.ui()
+    
+    def ui(self):
         box_ij = QGroupBox("Tipo de Informe Jurídico")
         lay_ij = QVBoxLayout()
         self.combo_ij = TipoComboBox(catalogo_subtipos(SUBTIPO_IJ))
@@ -55,7 +57,7 @@ class TabInformeJuridico(BaseTabDocumento):
         self.combo_ij._setup_items(catalogo_subtipos(SUBTIPO_IJ))
     
     def tomar_numero(self):
-        id_origen = self.combo_origen.currentData() if self.combo_origen.isVisible() else None
+        id_origen = self.combo_origen.currentData() if self.combo_origen.isVisible() else self.combo_memos.currentData()
         asunto = self.text_asunto.toPlainText() if self.text_asunto.isVisible() else None
 
         id_subtipo = self.combo_ij.currentData()
