@@ -25,11 +25,11 @@ class TabDocumentoExtra(BaseTabDocumento):
         box_documento = QGroupBox("Documento: ")
         lay_documento = QVBoxLayout()
 
-        self.combo_tipos = TipoComboBox(catalogo_tipos_extra())
+        self.combo_tipos = TipoComboBox(catalogo_tipos_extra(), with_completer=False)
         self.combo_tipos.setEditable(False)
         lay_documento.addWidget(self.combo_tipos)
         lay_documento.addWidget(QLabel('Tipo: '))
-        self.combo_subtipos = TipoComboBox([])
+        self.combo_subtipos = TipoComboBox([], with_completer=False)
         self.combo_subtipos.setEditable(False)
         lay_documento.addWidget(self.combo_subtipos)
 
@@ -71,7 +71,7 @@ class TabDocumentoExtra(BaseTabDocumento):
         memo = self.combo_memos.currentData()
         if memo is None:
             return
-        tramite_id = busqueda_por_memo(memo)[2]
+        tramite_id = busqueda_por_memo(memo)[5]
         self.combo_origen.actualizar_items(catalogo_documentos(id_tramite=tramite_id))
 
     def filtrar_subtipos(self):
@@ -90,7 +90,7 @@ class TabDocumentoExtra(BaseTabDocumento):
             return
 
     def adjuntar_documento(self):
-        tramite = busqueda_por_memo(self.combo_memos.currentData())[2]
+        tramite = busqueda_por_memo(self.combo_memos.currentData())[5]
         codigo_documento = self.line_codigo.text()
         fecha_documento = self.date_fecha.date().toString("yyyy-MM-dd")
         tipo = self.combo_tipos.currentData()

@@ -34,7 +34,7 @@ class TabProvidencia(BaseTabDocumento):
 
         self.box_tipo = QGroupBox("Tipo")
         lay_tipo = QVBoxLayout()
-        self.combo_tipo = TipoComboBox(catalogo_subtipos(SUBTIPO_PR_INSTR))
+        self.combo_tipo = TipoComboBox(catalogo_subtipos(SUBTIPO_PR_INSTR), with_completer=False)
         self.combo_tipo.setEditable(False)
         lay_tipo.addWidget(self.combo_tipo)
         self.box_tipo.setLayout(lay_tipo)
@@ -115,7 +115,7 @@ class TabProvidencia(BaseTabDocumento):
     
 
     def actualizar_combos_extra(self):
-        self.combo_tipo.clear()
+        self.combo_tipo.setCurrentIndex(-1)
         self.combo_mes.setCurrentIndex(0)
         self.edit_fecha.setDate(QDate.currentDate())
 

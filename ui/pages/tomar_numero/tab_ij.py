@@ -14,7 +14,7 @@ class TabInformeJuridico(BaseTabDocumento):
     def ui(self):
         box_ij = QGroupBox("Tipo de Informe Jurídico")
         lay_ij = QVBoxLayout()
-        self.combo_ij = TipoComboBox(catalogo_subtipos(SUBTIPO_IJ))
+        self.combo_ij = TipoComboBox(catalogo_subtipos(SUBTIPO_IJ), with_completer=False)
         self.combo_ij.setEditable(False)
         lay_ij.addWidget(self.combo_ij)
         box_ij.setLayout(lay_ij)

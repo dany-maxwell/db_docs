@@ -21,7 +21,7 @@ class TabInformeAP(BaseTabDocumento):
         
         box_tipo = QGroupBox("Tipo de Informe de Actuación Previa")
         lay_tipo = QVBoxLayout()
-        self.combo_iap = TipoComboBox(catalogo_subtipos(SUBTIPO_IAP))
+        self.combo_iap = TipoComboBox(catalogo_subtipos(SUBTIPO_IAP), with_completer=False)
         self.combo_iap.setEditable(False)
         lay_tipo.addWidget(self.combo_iap)
         box_tipo.setLayout(lay_tipo)
@@ -65,5 +65,5 @@ class TabInformeAP(BaseTabDocumento):
         id_subtipo = self.combo_iap.currentData()
         self.crear_documento(TIPO_DOCUMENTO_IAP, subtipo_documento_id=id_subtipo, 
                            documento_origen_id=id_origen)
-        prosigue_tramite(self.combo_prosigue.currentData(), id_tramite[2])
+        prosigue_tramite(self.combo_prosigue.currentData(), id_tramite[5])
         self.box_prosigue.hide()

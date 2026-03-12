@@ -20,7 +20,8 @@ class BaseComboBox(QComboBox):
         self.with_completer = with_completer
         if items_with_ids:
             self._setup_items(items_with_ids)
-        self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
+        if self.isEditable():
+            self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
         self.setCurrentIndex(self.DEFAULT_INDEX)
     
     def _setup_items(self, items):
@@ -33,7 +34,9 @@ class BaseComboBox(QComboBox):
         for id_valor, codigo in items:
             self.addItem(codigo, id_valor)
 
-        self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
+        if self.isEditable():
+            self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
+        
         self.setCurrentIndex(self.DEFAULT_INDEX)
 
         if self.with_completer:
@@ -166,9 +169,9 @@ class FormularioBusqueda(QWidget):
 
         self.box_fil = QGroupBox("Filtros")
         lay_fil = QGridLayout(self.box_fil)
-        self.combo_tipo = TipoComboBox(catalogo_tipos())
+        self.combo_tipo = TipoComboBox(catalogo_tipos(), with_completer=False)
         self.combo_tipo.setEditable(False)
-        self.combo_sub = SubtipoComboBox([])
+        self.combo_sub = SubtipoComboBox([], with_completer=False)
         self.combo_sub.setEditable(False)
         self.combo_est = QComboBox()
         self.combo_est.addItems(ESTADOS_COMBO)

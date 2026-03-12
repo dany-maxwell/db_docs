@@ -22,7 +22,7 @@ class TabActoInicio(BaseTabDocumento):
         
         box_inf = QGroupBox("Infracciones")
         lay_inf = QVBoxLayout()
-        self.combo_inf = InfraccionComboBox(catalogo_infracciones())
+        self.combo_inf = InfraccionComboBox(catalogo_infracciones(), with_completer=False)
         self.combo_inf.setEditable(False)
         lay_inf.addWidget(self.combo_inf)
         
