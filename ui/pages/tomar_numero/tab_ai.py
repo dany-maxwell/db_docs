@@ -47,14 +47,14 @@ class TabActoInicio(BaseTabDocumento):
             lambda: self.filtrar_origen(TIPO_DOCUMENTO_IAP, 2)
         )
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
-        self.btn_add_inf.clicked.connect(self.agregar_infraccion)
+        self.btn_add_inf.clicked.connect(self.anadir_infraccion)
         self.btn_del_inf.clicked.connect(self.quitar_infraccion)
         self.button_tomar_numero.clicked.connect(self.tomar_numero)
     
     def filtrar_origen_custom(self):
         self.filtrar_origen(TIPO_DOCUMENTO_IAP, 2)
     
-    def agregar_infraccion(self):
+    def anadir_infraccion(self):
         id_infraccion = self.combo_inf.currentData()
         texto = self.combo_inf.currentText()
         
@@ -79,7 +79,8 @@ class TabActoInicio(BaseTabDocumento):
         
     def tomar_numero(self):
         id_tramite = busqueda_por_memo(id_memo=self.combo_memos.currentData())
-        id_origen = self.combo_memos.currentData()
+        id_origen = self.combo_origen.currentData()
+        if id_origen is None: id_origen = self.combo_memos.currentData()
         infracciones_a_guardar = list(self.infracciones_seleccionadas)
         resultado = self.crear_documento(TIPO_DOCUMENTO_AI, documento_origen_id=id_origen)
         if resultado:

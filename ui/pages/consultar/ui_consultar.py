@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QTimer
 from openpyxl import Workbook
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 
 from services.busqueda_service import busqueda_documentos_avanzada
 from services.catalogo_service import catalogo_subtipos, catalogo_reporte
@@ -171,24 +171,54 @@ class WidgetConsultar(QWidget):
         ws = wb.active
         ws.title = "Reporte Trámites"
 
-        headers = [
-            "N° Trámite", "Presunto Responsable", "Cedula - Ruc", "Unidad", "Memorando Petición PAS", "Fecha Memorando Petición PAS", "Petición Razonada",
-            "Fecha Petición Razonada", "Informe Técnico", "Fecha Informe Técnico", "Asunto", "N° Actuación Previa", "Fecha Actuación Previa", 
-            "N° Informe de Actuación Previa", "Fecha Informe Actuación Previa", "N° Informe Final de Actuación Previa", "Fecha Informe Final Actuación Previa",
-            "Procede", "Acto de Inicio", "Fecha Acto de Inicio", "Posible Infracción", "Informe Juridico", "Dictamen", "Fecha Dictamen", "Resoulución", "Fecha Resolución", "Estado"
-        ]
+        headers = datos['columnas']
+
         ws.append(headers)
 
-        for row in datos:
+        for row in datos['rows']:
             ws.append(row)
 
-        for col in ws.columns:
-            max_length = 0
-            col_letter = col[0].column_letter
-            for cell in col:
-                if cell.value:
-                    max_length = max(max_length, len(str(cell.value)))
-            ws.column_dimensions[col_letter].width = max_length + 2  
+        thin = Side(style='thin')
+        borde = Border(
+            left=thin,
+            right=thin,
+            top=thin,
+            bottom=thin
+        )
+
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.border = borde
+
+        for cell in ws[1]:
+            cell.font = Font(bold=True, size=12, color="FFFFFF")
+            cell.fill = PatternFill(start_color="444444", end_color="444444", fill_type="solid")
+            cell.alignment = Alignment(horizontal="center")
+
+        fill_resuelto = PatternFill(start_color="CCCCCC", end_color="CCCCCC", fill_type="solid")
+        fill_actuacionPrevia = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+        fill_instruccion = PatternFill(start_color="66FFFF", end_color="66FFFF", fill_type="solid")
+        fill_resolucion = PatternFill(start_color="FF9999", end_color="FF9999", fill_type="solid")
+
+        head = [cell.value for cell in ws[1]]
+        col_estado = head.index("ESTADO")
+
+        for row in ws.iter_rows(min_row=2):
+            estado = row[col_estado].value
+
+            if estado == "RESUELTO":
+                for cell in row:
+                    cell.fill = fill_resuelto
+            if estado == "EN ACTUACIÓN PREVIA":
+                for cell in row:
+                    cell.fill = fill_actuacionPrevia
+            if estado == "EN INSTRUCCIÓN":
+                for cell in row:
+                    cell.fill = fill_instruccion
+            if estado == "EN RESOLUCIÓN":
+                for cell in row:
+                    cell.fill = fill_resolucion
+
 
         wb.save(ruta)
         QMessageBox.information(self, "Exportado", MSG_EXCEL_EXPORTADO)

@@ -94,7 +94,7 @@ class WidgetImpugnacion(QWidget):
         documentos = catalogo_documentos_tramite(busqueda_por_memo(id_memo)[5])
         self.list_documentos.clear()
         for d in documentos:
-            item = QListWidgetItem(f"{d[0]} - {d[1]} - {d[2]} - {d[3]}")
+            item = QListWidgetItem(f"{d[0]} - {d[1]} {' - ' + d[2] if d[2] is not None else ''} - {d[3]}")
             item.setData(Qt.UserRole, d[4])
             self.list_documentos.addItem(item)
 

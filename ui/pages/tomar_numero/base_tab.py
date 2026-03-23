@@ -86,7 +86,7 @@ class BaseTabDocumento(QWidget):
         pass
     
     def crear_documento(self, tipo_documento_id, subtipo_documento_id=None, 
-                       documento_origen_id=None, asunto=None):
+                       documento_origen_id=None, asunto=None, plazo=None, fecha_termino=None):
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             QMessageBox.warning(self, "Error", "Selecciona un memorando")
@@ -99,11 +99,15 @@ class BaseTabDocumento(QWidget):
             documento_origen_id=documento_origen_id,
             codigo_manual=None,
             unidad_codigo=UNIDAD_CODIGO_DEFAULT,
-            asunto=asunto
+            asunto=asunto,
+            plazo=plazo,
+            fecha_termino=fecha_termino
         )
         
         QMessageBox.information(
             self,
             MSG_NUMERO_TOMADO,
-            f"Código: {resultado['codigo']}\nFecha: {resultado['fecha']}"
+            f"Código: {resultado['codigo']}\nFecha: {resultado['fecha']}" \
+            f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
         )
+        return resultado

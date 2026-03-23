@@ -30,7 +30,7 @@ class WidgetCrearTramite(QWidget):
         self.button_add_prov = QPushButton('Añadir "Proveedor"')
 
         lay_prob_ad.addWidget(self.combo_proveedores)
-        lay_prob_ad.addWidget(self.button_add_prov)
+        lay_prob_ad.addWidget(self.button_add_prov, 0)
 
         self.labels_prov = {
             "nombre": QLabel("Nombre: -"),

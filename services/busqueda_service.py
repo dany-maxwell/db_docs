@@ -60,3 +60,7 @@ def busqueda_documentos_avanzada(
 def busqueda_info_proveedor(id_proveedor):
     query = "select * from proveedor where id = %s"
     return ejecutar_query(query, (id_proveedor,), fetch_one=True)
+
+def busqueda_documento_origen(id_documento):
+    query = "select * from documento where id = %s"
+    return ejecutar_query(query, (id_documento,), fetch_one=True)

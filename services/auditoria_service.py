@@ -38,17 +38,20 @@ def crear_tramite(
 def crear_documento_con_numeracion(
     tramite_id,
     tipo_documento_id,
-    unidad_codigo,
+    unidad_codigo=None,
     codigo_manual=None,
+    fecha_documento=None,
     subtipo_documento_id=None,
     documento_origen_id=None,
-    asunto=None
+    asunto=None,
+    plazo=None,
+    fecha_termino=None
 ):
-    query = "select crear_documento(%s, %s, %s, %s, %s, %s, %s)"
+    query = "select crear_documento(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     result = ejecutar_query(
         query,
         (tramite_id, tipo_documento_id, subtipo_documento_id,
-         documento_origen_id, codigo_manual, unidad_codigo, asunto),
+         documento_origen_id, codigo_manual, unidad_codigo, fecha_documento, asunto, plazo, fecha_termino),
         fetch_one=True,
         commit=True
     )
@@ -106,3 +109,7 @@ def crear_proveedor(nombre, cedula, canton, ciudad, provincia):
     query2="select nombre, cedula_ruc from proveedor where id = %s"
     n_nombre, n_cedula = ejecutar_query(query2, proveedor_id, fetch_one=True, commit=True)
     return n_nombre, n_cedula
+
+def asignar_fecha_termino(fecha, plazo):
+    query="select sumar_dias_laborables(%s, %s)"
+    return ejecutar_query(query, (fecha, plazo), fetch_one=True)

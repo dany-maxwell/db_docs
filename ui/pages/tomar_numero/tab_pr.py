@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QDateEdit, QComboBox, QGroupBox, QVBoxLayout
+from PySide6.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QDateEdit, QComboBox, QGroupBox, QVBoxLayout, QLabel, QLineEdit, QFrame, QSpinBox
 from PySide6.QtCore import QDate
 
 from .base_tab import BaseTabDocumento
 from ui.widgets.widgets import OrigenComboBox, TipoComboBox
 from services.catalogo_service import catalogo_documentos, catalogo_subtipos
+from services.auditoria_service import asignar_fecha_termino
 from constants import (TIPO_DOCUMENTO_AP, TIPO_DOCUMENTO_AI, TIPO_DOCUMENTO_PR,
                        SUBTIPO_PR_AP, SUBTIPO_PR_INSTR, SUBTIPO_PR_RES)
 
@@ -33,10 +34,24 @@ class TabProvidencia(BaseTabDocumento):
         self.layout.addWidget(self.box_origen)
 
         self.box_tipo = QGroupBox("Tipo")
-        lay_tipo = QVBoxLayout()
+        lay_tipo = QHBoxLayout()
         self.combo_tipo = TipoComboBox(catalogo_subtipos(SUBTIPO_PR_INSTR), with_completer=False)
         self.combo_tipo.setEditable(False)
         lay_tipo.addWidget(self.combo_tipo)
+        self.frame_dias = QFrame()
+        lay_dias = QHBoxLayout()
+
+        lay_dias.addWidget(QLabel("Dias Termino: "))
+        self.spin_dias = QSpinBox()
+        self.spin_dias.setMinimum(0)
+        self.spin_dias.setMaximum(50)
+        self.spin_dias.setMaximumWidth(50)
+        lay_dias.addWidget(self.spin_dias)
+        self.frame_dias.setLayout(lay_dias)
+        self.frame_dias.hide()
+
+        lay_tipo.addWidget(self.frame_dias)
+        lay_tipo.addStretch()
         self.box_tipo.setLayout(lay_tipo)
         self.layout.addWidget(self.box_tipo)
         self.box_tipo.hide()
@@ -75,6 +90,7 @@ class TabProvidencia(BaseTabDocumento):
 
         self.combo_origen.currentIndexChanged.connect(self.filtrar_mem)
         self.combo_memos.currentIndexChanged.connect(lambda: self.filtrar_origen_custom())
+        self.combo_tipo.currentIndexChanged.connect(self.mostrar_dias_termino)
         self.button_tomar_numero.clicked.connect(self.tomar_numero)
 
         self.cambiar_modo()
@@ -119,6 +135,10 @@ class TabProvidencia(BaseTabDocumento):
         self.combo_mes.setCurrentIndex(0)
         self.edit_fecha.setDate(QDate.currentDate())
 
+    def mostrar_dias_termino(self):
+        idx_tipo = self.combo_tipo.currentIndex()
+        self.frame_dias.setVisible(idx_tipo == 1)
+
     def tomar_numero(self):
         id_origen = self.combo_origen.currentData()
         if not id_origen:
@@ -126,10 +146,18 @@ class TabProvidencia(BaseTabDocumento):
         
         if self.radio_ap.isChecked():
             id_subtipo = SUBTIPO_PR_AP
+            plazo = None
+            fecha_termino = None
         elif self.radio_instr.isChecked():
             id_subtipo = self.combo_tipo.currentData()
+            plazo = self.spin_dias.value() if self.frame_dias.isVisible() else None
+            fecha_termino = None
         else: 
             id_subtipo = SUBTIPO_PR_RES
+            meses = self.combo_mes.currentData()
+            fecha = self.edit_fecha.date().toString("yyyy-MM-dd")
+            plazo = meses*30
+            fecha_termino = asignar_fecha_termino(fecha, plazo)
         
         self.crear_documento(TIPO_DOCUMENTO_PR, subtipo_documento_id=id_subtipo,
-                           documento_origen_id=id_origen)
+                           documento_origen_id=id_origen, plazo=plazo, fecha_termino=fecha_termino)

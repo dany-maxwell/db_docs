@@ -3,9 +3,9 @@ from PySide6.QtCore import QDate
 from ui.widgets.widgets import TipoComboBox, OrigenComboBox
 from .base_tab import BaseTabDocumento
 
-from services.busqueda_service import busqueda_por_memo, busqueda_info_documento
+from services.busqueda_service import busqueda_por_memo, busqueda_info_documento, busqueda_documento_origen
 from services.catalogo_service import catalogo_tipos_extra, catalogo_subtipos, catalogo_documentos, catalogo_tipos
-from services.auditoria_service import anadir_documento_manual
+from services.auditoria_service import crear_documento_con_numeracion, asignar_fecha_termino
 
 class TabDocumentoExtra(BaseTabDocumento):
     def __init__(self):
@@ -96,11 +96,23 @@ class TabDocumentoExtra(BaseTabDocumento):
         tipo = self.combo_tipos.currentData()
         subtipo = self.combo_subtipos.currentData()
         origen = self.combo_origen.currentData()
-        resultado = anadir_documento_manual(tramite, codigo_documento, fecha_documento,
-                                            tipo, subtipo, origen)
+
+        if tipo == 12 and subtipo == 13:
+            plazo = busqueda_documento_origen(origen)[10]
+            fecha_termino = asignar_fecha_termino(fecha_documento, plazo)
+        else: 
+            plazo = None
+            fecha_termino = None
+
+
+        crear_documento_con_numeracion(tramite_id=tramite, codigo_manual=codigo_documento, fecha_documento=fecha_documento,
+                                       tipo_documento_id=tipo, subtipo_documento_id=subtipo, documento_origen_id=origen, unidad_codigo=None,
+                                       plazo=plazo, fecha_termino=fecha_termino)
+        
         
         QMessageBox.information(
             self,
             "Adjuntado Correctamente",
-            f"El documento ha sido adjuntado correctamente"
+            f"El documento ha sido adjuntado correctamente" \
+            f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
         )
