@@ -1,5 +1,8 @@
 from services.db_helper import ejecutar_query
 
+from constants import (ESTADO_POR_DEFECTO, ESTADO_REQUIERE_AP,
+                       ESTADO_AP, ESTADO_INSTRUCCION, ESTADO_RESOLUCION, ESTADO_RESUELTO)
+
 def crear_tramite(
     proveedor_id,
     unidad_id,
@@ -88,12 +91,12 @@ def añadir_observacion(observacion, tramite_id):
 
 def actualizar_estado (estado, tramite_id):
     estados = {
-        1 : "PETICIÓN PAS PENDIENTE",
-        2 : "REQUIERE ACTUACION PREVIA",
-        3 : "EN ACTUACIÓN PREVIA",
-        4 : "EN INSTRUCCIÓN",
-        5 : "EN RESOLUCIÓN",
-        6 : "RESUELTO"
+        1: ESTADO_POR_DEFECTO,
+        2: ESTADO_REQUIERE_AP,
+        3: ESTADO_AP,
+        4: ESTADO_INSTRUCCION,
+        5: ESTADO_RESOLUCION,
+        6: ESTADO_RESUELTO,
     }
 
     estado_txt = estados.get(estado)

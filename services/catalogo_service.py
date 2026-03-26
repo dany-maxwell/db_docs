@@ -59,7 +59,6 @@ def catalogo_reporte():
         'columnas': columnas
     }
 
-@lru_cache(maxsize=32)
 def catalogo_tipos(id=None):
     query = "select id, nombre from tipo_documento where 1=1"
     params = []
@@ -71,7 +70,6 @@ def catalogo_tipos(id=None):
 def catalogo_tipos_extra():
     return ejecutar_query("select id, nombre from tipo_documento where id in (12, 13, 14)", fetch_all=True)
 
-@lru_cache(maxsize=128)
 def catalogo_subtipos(id_tipo, id=None):
     query = "select id, nombre from subtipo_documento where tipo_documento_id = %s"
     params = [id_tipo]
@@ -80,6 +78,5 @@ def catalogo_subtipos(id_tipo, id=None):
         params.append(id)
     return ejecutar_query( query, params, fetch_all=True)
 
-@lru_cache(maxsize=32)
 def catalogo_infracciones():
     return ejecutar_query("select id, codigo_infraccion from infraccion", fetch_all=True)
