@@ -126,7 +126,7 @@ class WidgetImpugnacion(QWidget):
 
     def aplicar_impugnacion(self):
         id_memo = self.combo_memos.currentData()
-        id_tramite = busqueda_por_memo(id_memo)[5] if id_memo else None
+        id_tramite = busqueda_por_memo(id_memo)["tramite"] if id_memo else None
         codigo = self.line_impugnacion.text()
         fecha = self.date_impugnacion.date().toString("yyyy-MM-dd")
         id_documento = self.list_documentos.currentItem().data(Qt.UserRole) if self.list_documentos.currentItem() else None
