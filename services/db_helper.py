@@ -8,7 +8,8 @@ def ejecutar_query(query, params=None, fetch_one=False, fetch_all=True, commit=F
             
             if commit:
                 conn.commit()
-                return cur.fetchone() if fetch_one else None
+                result = cur.fetchone()
+                return dict(result) if result else None
             
             if fetch_one:
                 result = cur.fetchone()
