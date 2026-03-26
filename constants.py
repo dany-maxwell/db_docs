@@ -15,11 +15,17 @@ ESTADOS_COMBO = ["", ESTADO_POR_DEFECTO, ESTADO_REQUIERE_AP, ESTADO_AP, ESTADO_I
 FORMATO_FECHA = "yyyy-MM-dd"
 
 # Índices de tablas
-INDICES_DB_CONSULTAR = ['tramite_id','proveedor','unidad','fecha_tramite','estado',
-                        'tipo','subtipo','codigo','fecha','infracciones']
-HEADER_LABELS_CONSULTAR = [
-    "N° Trámite", "Proveedor", "Unidad", "F. Inicio", "Estado"
-    "Tipo", "Subtipo", "Código", "F. Doc", "Origen", "Infracciones"
+COLUMNAS_CONSULTAR = [
+    ("tramite_id",    "N° Trámite"),
+    ("proveedor",     "Proveedor"),
+    ("unidad",        "Unidad"),
+    ("fecha_tramite", "F. Inicio"),
+    ("tipo",          "Tipo"),
+    ("subtipo",       "Subtipo"),
+    ("codigo",        "Código"),
+    ("fecha",         "F. Doc"),
+    ("origen",        "Origen"),
+    ("infracciones",  "Infracciones"),
 ]
 
 # Tipos de documento

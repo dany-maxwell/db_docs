@@ -109,11 +109,11 @@ class WidgetCrearTramite(QWidget):
         
         datos = busqueda_info_proveedor(id_proveedor)
         if datos:
-            self.labels_prov["nombre"].setText(f"Nombre: {datos[1]}")
-            self.labels_prov["cedula"].setText(f"Cédula/Ruc: {datos[2]}")
-            self.labels_prov["ciudad"].setText(f"Ciudad: {datos[4]}")
-            self.labels_prov["canton"].setText(f"Canton: {datos[3]}")
-            self.labels_prov["provincia"].setText(f"Provincia: {datos[5]}")
+            self.labels_prov["nombre"].setText(f"Nombre: {datos['nombre']}")
+            self.labels_prov["cedula"].setText(f"Cédula/Ruc: {datos['cedula_ruc']}")
+            self.labels_prov["ciudad"].setText(f"Ciudad: {datos['ciudad']}")
+            self.labels_prov["canton"].setText(f"Canton: {datos['canton']}")
+            self.labels_prov["provincia"].setText(f"Provincia: {datos['provincia']}")
 
     def actualizar_proveedores(self):
         self.actualizar_combos()
@@ -151,5 +151,5 @@ class WidgetCrearTramite(QWidget):
         QMessageBox.information(
             self,
             MSG_TRAMITE_INICIADO,
-            f"Trámite iniciado con éxito.\nCódigo de Memorando: {resultado[1]}\nFecha: {resultado[2]}"
+            f"Trámite iniciado con éxito.\nCódigo de Memorando: {resultado['codigo_memo']}\nFecha: {resultado['fecha_memo']}"
         )

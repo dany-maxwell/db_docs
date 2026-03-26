@@ -109,6 +109,6 @@ class BaseTabDocumento(QWidget):
                 self,
                 MSG_NUMERO_TOMADO,
                 f"Código: {resultado['codigo']}\nFecha: {resultado['fecha']}" \
-                f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
+                f"{'\nFecha Termino: ' + str(fecha_termino) if fecha_termino is not None else ''}"
             )
             return resultado

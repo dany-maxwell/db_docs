@@ -10,7 +10,7 @@ from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 from services.busqueda_service import busqueda_documentos_avanzada
 from services.catalogo_service import catalogo_subtipos, catalogo_reporte
 from ui.widgets.widgets import FormularioBusqueda
-from constants import HEADER_LABELS_CONSULTAR, INDICES_DB_CONSULTAR, MSG_EXCEL_EXPORTADO, MSG_TITULO_RESUMEN
+from constants import COLUMNAS_CONSULTAR, MSG_EXCEL_EXPORTADO, MSG_TITULO_RESUMEN
 
 class WidgetConsultar(QWidget):
     def __init__(self):
@@ -30,8 +30,9 @@ class WidgetConsultar(QWidget):
         layout.addWidget(self.filtros)
 
         derecha = QVBoxLayout()
-        self.tabla = QTableWidget(0, len(HEADER_LABELS_CONSULTAR))
-        self.tabla.setHorizontalHeaderLabels(HEADER_LABELS_CONSULTAR)
+        self.header_labels = [col[1] for col in COLUMNAS_CONSULTAR]
+        self.tabla = QTableWidget(0, len(self.header_labels))
+        self.tabla.setHorizontalHeaderLabels(self.header_labels)
         self.tabla.horizontalHeader().setStretchLastSection(True)
         self.tabla.setAlternatingRowColors(True)
         self.tabla.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -81,16 +82,13 @@ class WidgetConsultar(QWidget):
     def cargar_tabla(self, datos):
         self.tabla.setRowCount(0)
         self.tabla.setUpdatesEnabled(False)
-        
         for fila_data in datos:
             row_idx = self.tabla.rowCount()
             self.tabla.insertRow(row_idx)
-            
-            for col_idx, db_idx in enumerate(INDICES_DB_CONSULTAR):
-                valor = fila_data[db_idx]
+            for col_idx, (db_key, _) in enumerate(COLUMNAS_CONSULTAR):
+                valor = fila_data.get(db_key)
                 texto = str(valor) if valor is not None else ""
                 self.tabla.setItem(row_idx, col_idx, QTableWidgetItem(texto))
-                
         self.tabla.setUpdatesEnabled(True)
 
     def exportar_excel(self):
@@ -139,7 +137,7 @@ class WidgetConsultar(QWidget):
 
     def _crear_hoja_documentos(self, wb, nombre):
         ws = wb.create_sheet(nombre)
-        ws.append(HEADER_LABELS_CONSULTAR)
+        ws.append(self.header_labels)
 
         for cells in ws.iter_rows(min_row=1, max_row=1):
             for cell in cells:

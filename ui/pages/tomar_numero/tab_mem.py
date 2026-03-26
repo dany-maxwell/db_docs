@@ -46,23 +46,36 @@ class TabMem(BaseTabDocumento):
 
     def acceptar_memo(self):
         try:
-            id_tramite = busqueda_por_memo(self.combo_memos.currentData())['tramite']
+            id_memo = self.combo_memos.currentData()
+            if not id_memo:
+                QMessageBox.warning(self, "Advertencia", "Selecciona un memorando primero.")
+                return
+            tramite = busqueda_por_memo(id_memo)
+            if not tramite:
+                QMessageBox.warning(self, "Error", "No se encontró el trámite asociado.")
+                return
+            id_tramite = tramite['tramite']
             if self.radio_devolver.isChecked():
                 actualizar_estado(6, id_tramite)
             elif self.radio_requiereap.isChecked():
                 actualizar_estado(2, id_tramite)
-        
             añadir_observacion(self.text_razon.toPlainText(), id_tramite)
             QMessageBox.information(self, "Éxito", "El memo ha sido procesado exitosamente.")
         except Exception as e:
-            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")        
-    
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")
+        
     def finalizar_tramite(self):
         try:
-            id_tramite = busqueda_por_memo(self.combo_memos.currentData())['tramite']
-            actualizar_estado(6, id_tramite)
+            id_memo = self.combo_memos.currentData()
+            if not id_memo:
+                QMessageBox.warning(self, "Advertencia", "Selecciona un memorando primero.")
+                return
+            tramite = busqueda_por_memo(id_memo)
+            if not tramite:
+                QMessageBox.warning(self, "Error", "No se encontró el trámite asociado.")
+                return
+            actualizar_estado(6, tramite['tramite'])
             QMessageBox.information(self, "Éxito", "El trámite ha sido cerrado exitosamente.")
         except Exception as e:
             QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")
-
     
