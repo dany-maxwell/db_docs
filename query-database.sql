@@ -28,7 +28,7 @@ CREATE SEQUENCE public.documento_id_seq
 
 ALTER SEQUENCE public.documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.documento_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.documento_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.infraccion_id_seq;
 
@@ -44,7 +44,7 @@ CREATE SEQUENCE public.infraccion_id_seq
 
 ALTER SEQUENCE public.infraccion_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.infraccion_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.infraccion_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.infraccion_id_seq TO user_app;
 
 -- DROP SEQUENCE public.plantilla_codigo_id_seq;
 
@@ -60,7 +60,7 @@ CREATE SEQUENCE public.plantilla_codigo_id_seq
 
 ALTER SEQUENCE public.plantilla_codigo_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.plantilla_codigo_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.plantilla_codigo_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.plantilla_codigo_id_seq TO user_app;
 
 -- DROP SEQUENCE public.proveedor_id_seq;
 
@@ -76,7 +76,7 @@ CREATE SEQUENCE public.proveedor_id_seq
 
 ALTER SEQUENCE public.proveedor_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.proveedor_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.proveedor_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.proveedor_id_seq TO user_app;
 
 -- DROP SEQUENCE public.secuencia_documento_id_seq;
 
@@ -92,7 +92,7 @@ CREATE SEQUENCE public.secuencia_documento_id_seq
 
 ALTER SEQUENCE public.secuencia_documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.secuencia_documento_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.secuencia_documento_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.secuencia_documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.servicio_id_seq;
 
@@ -108,7 +108,7 @@ CREATE SEQUENCE public.servicio_id_seq
 
 ALTER SEQUENCE public.servicio_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.servicio_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.servicio_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.servicio_id_seq TO user_app;
 
 -- DROP SEQUENCE public.subtipo_documento_id_seq;
 
@@ -124,7 +124,7 @@ CREATE SEQUENCE public.subtipo_documento_id_seq
 
 ALTER SEQUENCE public.subtipo_documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.subtipo_documento_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.subtipo_documento_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.subtipo_documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.tipo_documento_id_seq;
 
@@ -140,7 +140,7 @@ CREATE SEQUENCE public.tipo_documento_id_seq
 
 ALTER SEQUENCE public.tipo_documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.tipo_documento_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.tipo_documento_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.tipo_documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.tramite_id_seq;
 
@@ -156,7 +156,7 @@ CREATE SEQUENCE public.tramite_id_seq
 
 ALTER SEQUENCE public.tramite_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.tramite_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.tramite_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.tramite_id_seq TO user_app;
 
 -- DROP SEQUENCE public.trazabilidad_tramite_id_seq;
 
@@ -172,7 +172,7 @@ CREATE SEQUENCE public.trazabilidad_tramite_id_seq
 
 ALTER SEQUENCE public.trazabilidad_tramite_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.trazabilidad_tramite_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.trazabilidad_tramite_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.trazabilidad_tramite_id_seq TO user_app;
 
 -- DROP SEQUENCE public.unidad_id_seq;
 
@@ -188,7 +188,7 @@ CREATE SEQUENCE public.unidad_id_seq
 
 ALTER SEQUENCE public.unidad_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.unidad_id_seq TO postgres;
-GRANT USAGE, SELECT ON SEQUENCE public.unidad_id_seq TO user_app;
+GRANT SELECT, USAGE ON SEQUENCE public.unidad_id_seq TO user_app;
 -- public.feriados definition
 
 -- Drop table
@@ -658,6 +658,7 @@ AS SELECT p.nombre AS proveedor_id,
 
 ALTER TABLE public.v_jp OWNER TO postgres;
 GRANT ALL ON TABLE public.v_jp TO postgres;
+GRANT INSERT, SELECT, UPDATE ON TABLE public.v_jp TO user_app;
 
 
 -- public.v_reporte_tramites source
@@ -1378,6 +1379,7 @@ AS WITH datos_agrupados AS (
 
 ALTER TABLE public.vista_seguimiento_final OWNER TO postgres;
 GRANT ALL ON TABLE public.vista_seguimiento_final TO postgres;
+GRANT INSERT, SELECT, UPDATE ON TABLE public.vista_seguimiento_final TO user_app;
 
 
 -- public.vista_seguimiento_tipos source
@@ -1522,147 +1524,6 @@ $function$
 ALTER FUNCTION public.aplicar_impugnacion(varchar, date, int4, int4) OWNER TO postgres;
 GRANT ALL ON FUNCTION public.aplicar_impugnacion(varchar, date, int4, int4) TO postgres;
 
--- DROP FUNCTION public.aplicar_impugnacion(int4, date, int4, int4);
-
-CREATE OR REPLACE FUNCTION public.aplicar_impugnacion(p_codigo_imp integer, p_fecha_imp date, p_tramite_id integer, p_documenti_id integer)
- RETURNS integer
- LANGUAGE plpgsql
-AS $function$
-declare
-	v_rows_updated int;
-
-begin
-	insert into documento (tramite_id, tipo_documento_id, codigo_final, es_manual, fecha_documento)
-	values
-	(p_tramite_id, 10, p_codigo_inp, True, p_fecha_imp);
-
-	update documento set archivado = true
-	where tramite_id = p_tramite_id
-	and id >= p_documento_id;
-
-	get diagnostics v_rows_updated = row_count;
-
-	return v_rows_updated;
-end;
-$function$
-;
-
--- Permissions
-
-ALTER FUNCTION public.aplicar_impugnacion(int4, date, int4, int4) OWNER TO postgres;
-GRANT ALL ON FUNCTION public.aplicar_impugnacion(int4, date, int4, int4) TO postgres;
-
--- DROP FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, text, int4, date);
-
-CREATE OR REPLACE FUNCTION public.crear_documento(p_tramite integer, p_tipo integer, p_subtipo integer, p_origen integer, p_codigo_manual character varying, p_unidad character varying, p_asunto text DEFAULT NULL::text, p_plazo integer DEFAULT NULL::integer, p_fecha_termino date DEFAULT NULL::date)
- RETURNS integer
- LANGUAGE plpgsql
-AS $function$
-declare
-    v_codigo varchar;
-    v_es_manual boolean;
-    v_anio int := extract(year from current_date);
-    v_id int;
-begin
-
-    if p_codigo_manual is not null then
-        v_codigo := p_codigo_manual;
-        v_es_manual := true;
-    else
-        v_codigo := generar_codigo_documento(
-                        p_tipo,
-                        p_unidad,
-                        v_anio);
-        v_es_manual := false;
-    end if;
-    insert into documento(
-        tramite_id,
-        tipo_documento_id,
-        subtipo_documento_id,
-        documento_origen_id,
-        codigo_final,
-        es_manual,
-		asunto,
-		plazo,
-		fecha_termino
-    )
-    values (
-        p_tramite,
-        p_tipo,
-        p_subtipo,
-        p_origen,
-        v_codigo,
-        v_es_manual,
-		p_asunto,
-		p_plazo,
-		p_fecha_termino
-    )
-    returning id into v_id;
-    return v_id;
-end;
-$function$
-;
-
--- Permissions
-
-ALTER FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, text, int4, date) OWNER TO postgres;
-GRANT ALL ON FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, text, int4, date) TO postgres;
-
--- DROP FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar);
-
-CREATE OR REPLACE FUNCTION public.crear_documento(p_tramite integer, p_tipo integer, p_subtipo integer, p_origen integer, p_codigo_manual character varying, p_unidad character varying)
- RETURNS integer
- LANGUAGE plpgsql
-AS $function$
-declare
-    v_codigo varchar;
-    v_es_manual boolean;
-    v_anio int := extract(year from current_date);
-    v_id int;
-begin
-
-    if p_codigo_manual is not null then
-        v_codigo := p_codigo_manual;
-        v_es_manual := true;
-
-    else
-        v_codigo := generar_codigo_documento(
-                        p_tipo,
-                        p_unidad,
-                        v_anio);
-
-        v_es_manual := false;
-    end if;
-
-    insert into documento(
-        tramite_id,
-        tipo_documento_id,
-        subtipo_documento_id,
-        documento_origen_id,
-        codigo_final,
-        es_manual
-    )
-    values (
-        p_tramite,
-        p_tipo,
-        p_subtipo,
-        p_origen,
-        v_codigo,
-        v_es_manual
-    )
-    returning id into v_id;
-
-    return v_id;
-
-end;
-$function$
-;
-
--- Permissions
-
-ALTER FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar) OWNER TO postgres;
-GRANT ALL ON FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar) TO postgres;
-
 -- DROP FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, date, text, int4, date);
 
 CREATE OR REPLACE FUNCTION public.crear_documento(p_tramite integer, p_tipo integer, p_subtipo integer, p_origen integer, p_codigo_manual character varying, p_unidad character varying, p_fecha_documento date DEFAULT NULL::date, p_asunto text DEFAULT NULL::text, p_plazo integer DEFAULT NULL::integer, p_fecha_termino date DEFAULT NULL::date)
@@ -1728,97 +1589,6 @@ $function$
 
 ALTER FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, date, text, int4, date) OWNER TO postgres;
 GRANT ALL ON FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, date, text, int4, date) TO postgres;
-
--- DROP FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, text);
-
-CREATE OR REPLACE FUNCTION public.crear_documento(p_tramite integer, p_tipo integer, p_subtipo integer, p_origen integer, p_codigo_manual character varying, p_unidad character varying, p_asunto text DEFAULT NULL::text)
- RETURNS integer
- LANGUAGE plpgsql
-AS $function$
-declare
-    v_codigo varchar;
-    v_es_manual boolean;
-    v_anio int := extract(year from current_date);
-    v_id int;
-begin
-
-    if p_codigo_manual is not null then
-        v_codigo := p_codigo_manual;
-        v_es_manual := true;
-
-    else
-        v_codigo := generar_codigo_documento(
-                        p_tipo,
-                        p_unidad,
-                        v_anio);
-
-        v_es_manual := false;
-    end if;
-
-    insert into documento(
-        tramite_id,
-        tipo_documento_id,
-        subtipo_documento_id,
-        documento_origen_id,
-        codigo_final,
-        es_manual,
-		asunto
-    )
-    values (
-        p_tramite,
-        p_tipo,
-        p_subtipo,
-        p_origen,
-        v_codigo,
-        v_es_manual,
-		p_asunto
-    )
-    returning id into v_id;
-
-    return v_id;
-
-end;
-$function$
-;
-
--- Permissions
-
-ALTER FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, text) OWNER TO postgres;
-GRANT ALL ON FUNCTION public.crear_documento(int4, int4, int4, int4, varchar, varchar, text) TO postgres;
-
--- DROP FUNCTION public.crear_tramite(int4, int4, varchar, date, text, varchar, date, varchar, date, varchar, date);
-
-CREATE OR REPLACE FUNCTION public.crear_tramite(p_proveedor_id integer, p_unidad_id integer, p_estado character varying, p_fecha_tramite date, p_asunto text, p_codigo_memo character varying, p_fecha_memo date, p_codigo_peticion character varying DEFAULT NULL::character varying, p_fecha_peticion date DEFAULT NULL::date, p_codigo_informe character varying DEFAULT NULL::character varying, p_fecha_informe date DEFAULT NULL::date)
- RETURNS integer
- LANGUAGE plpgsql
-AS $function$
-declare
-	v_tramite_id int;
-begin
-	insert into tramite (proveedor_id, unidad_id, estado, fecha_creacion, asunto) values
-		(p_proveedor_id, p_unidad_id, p_estado, p_fecha_tramite, p_asunto) returning id into v_tramite_id;
-
-	insert into documento (tramite_id, tipo_documento_id, codigo_final, es_manual, fecha_documento) values
-		(v_tramite_id, 1, p_codigo_memo, True, p_fecha_memo);
-
-	if p_codigo_peticion is not null then
-		insert into documento (tramite_id, tipo_documento_id, codigo_final, es_manual, fecha_documento) values
-			(v_tramite_id, 2, p_codigo_peticion, True, p_fecha_peticion);
-	end if;
-	
-	if p_codigo_informe is not null then
-		insert into documento (tramite_id, tipo_documento_id, codigo_final, es_manual, fecha_documento) values
-			(v_tramite_id, 3, p_codigo_informe, True, p_fecha_informe);
-	end if;
-	return v_tramite_id;
-end 
-$function$
-;
-
--- Permissions
-
-ALTER FUNCTION public.crear_tramite(int4, int4, varchar, date, text, varchar, date, varchar, date, varchar, date) OWNER TO postgres;
-GRANT ALL ON FUNCTION public.crear_tramite(int4, int4, varchar, date, text, varchar, date, varchar, date, varchar, date) TO postgres;
 
 -- DROP FUNCTION public.crear_tramite(int4, int4, int4, varchar, date, text, varchar, date, varchar, date, varchar, date);
 
