@@ -107,7 +107,8 @@ def actualizar_estado (estado, tramite_id):
 def crear_proveedor(nombre, cedula, canton, ciudad, provincia):
     query="select nuevo_proveedor(%s, %s, %s, %s, %s)"
     result = ejecutar_query(query, (nombre, cedula, canton, ciudad, provincia),fetch_one=True, commit=True)
-    
+    if not result:
+        raise RuntimeError("No se pudo crear el proveedor.")
     proveedor_id = result
     query2="select nombre, cedula_ruc from proveedor where id = %s"
     n_nombre, n_cedula = ejecutar_query(query2, proveedor_id, fetch_one=True, commit=True)

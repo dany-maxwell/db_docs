@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QDateEdit, QComboBox, QGroupBox, QVBoxLayout, QLabel, QLineEdit, QFrame, QSpinBox
+from PySide6.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QDateEdit, QComboBox, QGroupBox, QVBoxLayout, QLabel, QLineEdit, QFrame, QSpinBox, QMessageBox
 from PySide6.QtCore import QDate
 
 from .base_tab import BaseTabDocumento
@@ -140,24 +140,27 @@ class TabProvidencia(BaseTabDocumento):
         self.frame_dias.setVisible(idx_tipo == 1)
 
     def tomar_numero(self):
-        id_origen = self.combo_origen.currentData()
-        if not id_origen:
-            return
-        
-        if self.radio_ap.isChecked():
-            id_subtipo = SUBTIPO_PR_AP
-            plazo = None
-            fecha_termino = None
-        elif self.radio_instr.isChecked():
-            id_subtipo = self.combo_tipo.currentData()
-            plazo = self.spin_dias.value() if self.frame_dias.isVisible() else None
-            fecha_termino = None
-        else: 
-            id_subtipo = SUBTIPO_PR_RES
-            meses = self.combo_mes.currentData()
-            fecha = self.edit_fecha.date().toString("yyyy-MM-dd")
-            plazo = meses*30
-            fecha_termino = asignar_fecha_termino(fecha, plazo)
-        
-        self.crear_documento(TIPO_DOCUMENTO_PR, subtipo_documento_id=id_subtipo,
-                           documento_origen_id=id_origen, plazo=plazo, fecha_termino=fecha_termino)
+        try:
+            id_origen = self.combo_origen.currentData()
+            if not id_origen:
+                return
+            
+            if self.radio_ap.isChecked():
+                id_subtipo = SUBTIPO_PR_AP
+                plazo = None
+                fecha_termino = None
+            elif self.radio_instr.isChecked():
+                id_subtipo = self.combo_tipo.currentData()
+                plazo = self.spin_dias.value() if self.frame_dias.isVisible() else None
+                fecha_termino = None
+            else: 
+                id_subtipo = SUBTIPO_PR_RES
+                meses = self.combo_mes.currentData()
+                fecha = self.edit_fecha.date().toString("yyyy-MM-dd")
+                plazo = meses*30
+                fecha_termino = asignar_fecha_termino(fecha, plazo)
+            
+            self.crear_documento(TIPO_DOCUMENTO_PR, subtipo_documento_id=id_subtipo,
+                            documento_origen_id=id_origen, plazo=plazo, fecha_termino=fecha_termino)
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")

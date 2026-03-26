@@ -79,8 +79,8 @@ class WidgetImpugnacion(QWidget):
             self.label_cedula.setText("Cedula/Ruc: ")
             return
         info_memo = busqueda_por_memo(id_memo)
-        self.label_proveedor.setText(f"Proveedor: {info_memo[2]}")
-        self.label_cedula.setText(f"Cedula/Ruc: {info_memo[3]}")
+        self.label_proveedor.setText(f"Proveedor: {info_memo['proveedor']}")
+        self.label_cedula.setText(f"Cedula/Ruc: {info_memo['cedula_ruc']}")
     def actualizar_combos(self):
             self.combo_memos._setup_items([(None, "")] + catalogo_documentos(1))
             self.list_documentos.clear()
@@ -90,11 +90,11 @@ class WidgetImpugnacion(QWidget):
         if not id_memo:
             self.list_documentos.clear()
             return
-        documentos = catalogo_documentos_tramite(busqueda_por_memo(id_memo)[5])
+        documentos = catalogo_documentos_tramite(busqueda_por_memo(id_memo)['tramite'])
         self.list_documentos.clear()
         for d in documentos:
-            item = QListWidgetItem(f"{d[0]} - {d[1]} {' - ' + d[2] if d[2] is not None else ''} - {d[3]}")
-            item.setData(Qt.UserRole, d[4])
+            item = QListWidgetItem(f"{d['codigo_final']} - {d['tipo']} {' - ' + d['subtipo'] if d['subtipo'] is not None else ''} - {d['fecha_documento']}")
+            item.setData(Qt.UserRole, d['documento_id'])
             self.list_documentos.addItem(item)
 
     def mostrar_id(self):

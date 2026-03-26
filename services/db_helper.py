@@ -10,8 +10,9 @@ def ejecutar_query(query, params=None, fetch_one=False, fetch_all=True, commit=F
                 return cur.fetchone() if fetch_one else None
             
             if fetch_one:
-                return cur.fetchone()
+                result = cur.fetchone()
+                return dict(result) if result else None
             elif fetch_all:
-                return cur.fetchall()
+                return [dict(row) for row in cur.fetchall()]
             else:
                 return None

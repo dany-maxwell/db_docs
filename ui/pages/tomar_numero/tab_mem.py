@@ -45,19 +45,24 @@ class TabMem(BaseTabDocumento):
         self.btn_cerrar.clicked.connect(self.finalizar_tramite)
 
     def acceptar_memo(self):
-        id_tramite = busqueda_por_memo(self.combo_memos.currentData())[5]
-        if self.radio_devolver.isChecked():
-            actualizar_estado(6, id_tramite)
-        elif self.radio_requiereap.isChecked():
-            actualizar_estado(2, id_tramite)
-    
-        añadir_observacion(self.text_razon.toPlainText(), id_tramite)
-        QMessageBox.information(self, "Éxito", "El memo ha sido procesado exitosamente.")
+        try:
+            id_tramite = busqueda_por_memo(self.combo_memos.currentData())['tramite']
+            if self.radio_devolver.isChecked():
+                actualizar_estado(6, id_tramite)
+            elif self.radio_requiereap.isChecked():
+                actualizar_estado(2, id_tramite)
+        
+            añadir_observacion(self.text_razon.toPlainText(), id_tramite)
+            QMessageBox.information(self, "Éxito", "El memo ha sido procesado exitosamente.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")        
     
     def finalizar_tramite(self):
-        id_tramite = busqueda_por_memo(self.combo_memos.currentData())[5]
-        actualizar_estado(6, id_tramite)
-        QMessageBox.information(self, "Éxito", "El trámite ha sido cerrado exitosamente.")
-        
+        try:
+            id_tramite = busqueda_por_memo(self.combo_memos.currentData())['tramite']
+            actualizar_estado(6, id_tramite)
+            QMessageBox.information(self, "Éxito", "El trámite ha sido cerrado exitosamente.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")
 
     

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout
+from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QMessageBox
 
 from .base_tab import BaseTabDocumento
 from ui.widgets.widgets import OrigenComboBox
@@ -37,5 +37,8 @@ class TabDictamen(BaseTabDocumento):
         pass
     
     def tomar_numero(self):
-        id_origen = self.combo_origen.currentData()
-        self.crear_documento(TIPO_DOCUMENTO_D, documento_origen_id=id_origen)
+        try:
+            id_origen = self.combo_origen.currentData()
+            self.crear_documento(TIPO_DOCUMENTO_D, documento_origen_id=id_origen)
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")

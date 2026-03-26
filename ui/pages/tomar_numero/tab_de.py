@@ -71,7 +71,7 @@ class TabDocumentoExtra(BaseTabDocumento):
         memo = self.combo_memos.currentData()
         if memo is None:
             return
-        tramite_id = busqueda_por_memo(memo)[5]
+        tramite_id = busqueda_por_memo(memo)['tramite']
         self.combo_origen.actualizar_items(catalogo_documentos(id_tramite=tramite_id))
 
     def filtrar_subtipos(self):
@@ -81,38 +81,41 @@ class TabDocumentoExtra(BaseTabDocumento):
         self.label_origen.setText("Tipo Documento Origen: --")
         info_doc = busqueda_info_documento(self.combo_origen.currentData())
         if info_doc is not None:
-            tipo_origen = catalogo_tipos(info_doc[2])[0]
+            tipo_origen = catalogo_tipos(info_doc['tipo_documento_id'])['id']
             subtipo_origen = ("","")
-            if info_doc[3] is not None:
-                subtipo_origen = catalogo_subtipos(info_doc[2], info_doc[3])[0]
+            if info_doc['subtipo_documento_id'] is not None:
+                subtipo_origen = catalogo_subtipos(info_doc['tipo_documento_id'], info_doc['subtipo_documento_id'])['id']
             self.label_origen.setText(f'Tipo Documento Origen: {tipo_origen[1]} {subtipo_origen[1]}')
         else:
             return
 
     def adjuntar_documento(self):
-        tramite = busqueda_por_memo(self.combo_memos.currentData())[5]
-        codigo_documento = self.line_codigo.text()
-        fecha_documento = self.date_fecha.date().toString("yyyy-MM-dd")
-        tipo = self.combo_tipos.currentData()
-        subtipo = self.combo_subtipos.currentData()
-        origen = self.combo_origen.currentData()
+        try:
+            tramite = busqueda_por_memo(self.combo_memos.currentData())['tramite']
+            codigo_documento = self.line_codigo.text()
+            fecha_documento = self.date_fecha.date().toString("yyyy-MM-dd")
+            tipo = self.combo_tipos.currentData()
+            subtipo = self.combo_subtipos.currentData()
+            origen = self.combo_origen.currentData()
 
-        if tipo == 12 and subtipo == 13:
-            plazo = busqueda_documento_origen(origen)[10]
-            fecha_termino = asignar_fecha_termino(fecha_documento, plazo)
-        else: 
-            plazo = None
-            fecha_termino = None
+            if tipo == 12 and subtipo == 13:
+                plazo = busqueda_documento_origen(origen)['plazo']
+                fecha_termino = asignar_fecha_termino(fecha_documento, plazo)
+            else: 
+                plazo = None
+                fecha_termino = None
 
 
-        crear_documento_con_numeracion(tramite_id=tramite, codigo_manual=codigo_documento, fecha_documento=fecha_documento,
-                                       tipo_documento_id=tipo, subtipo_documento_id=subtipo, documento_origen_id=origen, unidad_codigo=None,
-                                       plazo=plazo, fecha_termino=fecha_termino)
-        
-        
-        QMessageBox.information(
-            self,
-            "Adjuntado Correctamente",
-            f"El documento ha sido adjuntado correctamente" \
-            f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
-        )
+            crear_documento_con_numeracion(tramite_id=tramite, codigo_manual=codigo_documento, fecha_documento=fecha_documento,
+                                        tipo_documento_id=tipo, subtipo_documento_id=subtipo, documento_origen_id=origen, unidad_codigo=None,
+                                        plazo=plazo, fecha_termino=fecha_termino)
+            
+            QMessageBox.information(
+                self,
+                "Adjuntado Correctamente",
+                f"El documento ha sido adjuntado correctamente" \
+                f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
+            )
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")

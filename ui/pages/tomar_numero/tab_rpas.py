@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout
+from PySide6.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QMessageBox
 
 from services.busqueda_service import busqueda_por_memo
 
@@ -37,10 +37,13 @@ class TabResolucion(BaseTabDocumento):
         pass
 
     def tomar_numero(self):
-        tramite_id = busqueda_por_memo(id_memo=self.combo_memos.currentData())
-        id_origen = self.combo_origen.currentData()
-        if not id_origen:
-            return
-        self.crear_documento(TIPO_DOCUMENTO_RPAS, documento_origen_id=id_origen)
+        try:
+            tramite_id = busqueda_por_memo(id_memo=self.combo_memos.currentData())
+            id_origen = self.combo_origen.currentData()
+            if not id_origen:
+                return
+            self.crear_documento(TIPO_DOCUMENTO_RPAS, documento_origen_id=id_origen)
 
-        actualizar_estado(5, tramite_id[5])
+            actualizar_estado(5, tramite_id['tramite'])
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")

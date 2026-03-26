@@ -78,15 +78,21 @@ class TabActoInicio(BaseTabDocumento):
         self.infracciones_seleccionadas.clear()
         
     def tomar_numero(self):
-        id_tramite = busqueda_por_memo(id_memo=self.combo_memos.currentData())
-        id_origen = self.combo_origen.currentData()
-        if id_origen is None: id_origen = self.combo_memos.currentData()
-        infracciones_a_guardar = list(self.infracciones_seleccionadas)
-        resultado = self.crear_documento(TIPO_DOCUMENTO_AI, documento_origen_id=id_origen)
-        if resultado:
-            for inf in infracciones_a_guardar:
-                agregar_infraccion(resultado["id"], inf)
-            self.infracciones_seleccionadas.clear()
-            self.list_inf.clear()
+        try:
+            id_tramite = busqueda_por_memo(id_memo=self.combo_memos.currentData())
+            if not id_tramite:
+                QMessageBox.warning(self, "Error", "No se encontró el trámite asociado.")
+                return
+            id_origen = self.combo_origen.currentData()
+            if id_origen is None: id_origen = self.combo_memos.currentData()
+            infracciones_a_guardar = list(self.infracciones_seleccionadas)
+            resultado = self.crear_documento(TIPO_DOCUMENTO_AI, documento_origen_id=id_origen)
+            if resultado:
+                for inf in infracciones_a_guardar:
+                    agregar_infraccion(resultado["id"], inf)
+                self.infracciones_seleccionadas.clear()
+                self.list_inf.clear()
 
-        actualizar_estado(4, id_tramite[5])
+            actualizar_estado(4, id_tramite['tramite'])
+        except Exception as e:
+            QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")

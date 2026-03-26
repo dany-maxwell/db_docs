@@ -44,15 +44,15 @@ class BaseTabDocumento(QWidget):
             self.label_cedula.setText("Cedula/Ruc: ")
             return
         info_memo = busqueda_por_memo(id_memo)
-        self.label_proveedor.setText(f"Proveedor: {info_memo[2]}")
-        self.label_cedula.setText(f"Cedula/Ruc: {info_memo[3]}")
+        self.label_proveedor.setText(f"Proveedor: {info_memo['proveedor']}")
+        self.label_cedula.setText(f"Cedula/Ruc: {info_memo['cedula_ruc']}")
     
     def filtrar_origen(self, tipo_doc_id, subtipo_doc_id=None):
         id_memo = self.combo_memos.currentData()
         if not id_memo:
             new_items = catalogo_documentos(tipo_doc_id, subtipo_doc_id)
         else:
-            tramite = busqueda_por_memo(id_memo)[5]
+            tramite = busqueda_por_memo(id_memo)['tramite']
             new_items = catalogo_documentos(tipo_doc_id, subtipo_doc_id, tramite)
         self.combo_origen.currentIndexChanged.disconnect(self.filtrar_mem)
         self.combo_origen.actualizar_items(new_items)
@@ -87,27 +87,28 @@ class BaseTabDocumento(QWidget):
     
     def crear_documento(self, tipo_documento_id, subtipo_documento_id=None, 
                        documento_origen_id=None, asunto=None, plazo=None, fecha_termino=None):
-        id_memo = self.combo_memos.currentData()
-        if not id_memo:
-            QMessageBox.warning(self, "Error", "Selecciona un memorando")
-            return None
         
-        resultado = crear_documento_con_numeracion(
-            tramite_id=busqueda_por_memo(id_memo)[5],
-            tipo_documento_id=tipo_documento_id,
-            subtipo_documento_id=subtipo_documento_id,
-            documento_origen_id=documento_origen_id,
-            codigo_manual=None,
-            unidad_codigo=UNIDAD_CODIGO_DEFAULT,
-            asunto=asunto,
-            plazo=plazo,
-            fecha_termino=fecha_termino
-        )
-        
-        QMessageBox.information(
-            self,
-            MSG_NUMERO_TOMADO,
-            f"Código: {resultado['codigo']}\nFecha: {resultado['fecha']}" \
-            f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
-        )
-        return resultado
+            id_memo = self.combo_memos.currentData()
+            if not id_memo:
+                QMessageBox.warning(self, "Error", "Selecciona un memorando")
+                return None
+            
+            resultado = crear_documento_con_numeracion(
+                tramite_id=busqueda_por_memo(id_memo)['tramite'],
+                tipo_documento_id=tipo_documento_id,
+                subtipo_documento_id=subtipo_documento_id,
+                documento_origen_id=documento_origen_id,
+                codigo_manual=None,
+                unidad_codigo=UNIDAD_CODIGO_DEFAULT,
+                asunto=asunto,
+                plazo=plazo,
+                fecha_termino=fecha_termino
+            )
+            
+            QMessageBox.information(
+                self,
+                MSG_NUMERO_TOMADO,
+                f"Código: {resultado['codigo']}\nFecha: {resultado['fecha']}" \
+                f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
+            )
+            return resultado
