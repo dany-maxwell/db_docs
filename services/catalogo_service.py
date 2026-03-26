@@ -1,20 +1,18 @@
 from db.connection import get_connection
 from services.db_helper import ejecutar_query
-from functools import lru_cache
-
 
 def catalogo_proveedores():
     
-    return ejecutar_query("select id, nombre from proveedor order by nombre", fetch_all=True)
+    return ejecutar_query("select id, nombre as item from proveedor order by nombre", fetch_all=True)
 
 def catalogo_unidades():
-    return ejecutar_query("select id, codigo from unidad order by id", fetch_all=True)
+    return ejecutar_query("select id, codigo as item from unidad order by id", fetch_all=True)
 
 def catalogo_servicios():
-    return ejecutar_query("select id, servicio from servicio order by servicio", fetch_all=True)
+    return ejecutar_query("select id, servicio as item from servicio order by servicio", fetch_all=True)
 
 def catalogo_documentos(id_tipo=None, id_subtipo=None, id_tramite=None, id_documento=None):
-    query = "select id, codigo_final from documento where 1 = 1"
+    query = "select id, codigo_final as item from documento where 1 = 1"
     params = []
     if id_tipo is not None:
         query += " and tipo_documento_id = %s"
@@ -60,7 +58,7 @@ def catalogo_reporte():
     }
 
 def catalogo_tipos(id=None):
-    query = "select id, nombre from tipo_documento where 1=1"
+    query = "select id, nombre as item from tipo_documento where 1=1"
     params = []
     if id is not None:
         query += " and id=%s"
@@ -68,10 +66,10 @@ def catalogo_tipos(id=None):
     return ejecutar_query(query=query, params=params, fetch_all=True)
 
 def catalogo_tipos_extra():
-    return ejecutar_query("select id, nombre from tipo_documento where id in (12, 13, 14)", fetch_all=True)
+    return ejecutar_query("select id, nombre as item from tipo_documento where id in (12, 13, 14)", fetch_all=True)
 
 def catalogo_subtipos(id_tipo, id=None):
-    query = "select id, nombre from subtipo_documento where tipo_documento_id = %s"
+    query = "select id, nombre as item from subtipo_documento where tipo_documento_id = %s"
     params = [id_tipo]
     if id is not None:
         query+= " and id = %s"
@@ -79,4 +77,4 @@ def catalogo_subtipos(id_tipo, id=None):
     return ejecutar_query( query, params, fetch_all=True)
 
 def catalogo_infracciones():
-    return ejecutar_query("select id, codigo_infraccion from infraccion", fetch_all=True)
+    return ejecutar_query("select id, codigo_infraccion as item from infraccion", fetch_all=True)

@@ -15,9 +15,10 @@ ESTADOS_COMBO = ["", ESTADO_POR_DEFECTO, ESTADO_REQUIERE_AP, ESTADO_AP, ESTADO_I
 FORMATO_FECHA = "yyyy-MM-dd"
 
 # Índices de tablas
-INDICES_DB_CONSULTAR = [0, 2, 4, 7, 10, 12, 14, 15, 16, 17]
+INDICES_DB_CONSULTAR = ['tramite_id','proveedor','unidad','fecha_tramite','estado',
+                        'tipo','subtipo','codigo','fecha','infracciones']
 HEADER_LABELS_CONSULTAR = [
-    "N° Trámite", "Proveedor", "Unidad", "F. Inicio",
+    "N° Trámite", "Proveedor", "Unidad", "F. Inicio", "Estado"
     "Tipo", "Subtipo", "Código", "F. Doc", "Origen", "Infracciones"
 ]
 

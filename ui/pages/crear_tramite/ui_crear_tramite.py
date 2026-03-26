@@ -151,5 +151,5 @@ class WidgetCrearTramite(QWidget):
         QMessageBox.information(
             self,
             MSG_TRAMITE_INICIADO,
-            f"Trámite iniciado con éxito.\nCódigo de Memorando: {resultado['codigo_memo']}\nFecha: {resultado['fecha_memo']}"
+            f"Trámite iniciado con éxito.\nCódigo de Memorando: {resultado[1]}\nFecha: {resultado[2]}"
         )

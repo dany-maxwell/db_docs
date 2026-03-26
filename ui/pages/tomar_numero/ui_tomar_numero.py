@@ -18,7 +18,7 @@ class WidgetTomarNumero(QWidget):
 
         self.tabs = QTabWidget()
 
-        self.tabs.addTab(TabMem(), "(provicional)")
+        self.tabs.addTab(TabMem(), "Aceptar Memo")
         self.tabs.addTab(TabActuacionPrevia(), "Actuación Previa")
         self.tabs.addTab(TabInformeAP(), "Informe AP")
         self.tabs.addTab(TabProvidencia(), "Providencias")
@@ -26,7 +26,7 @@ class WidgetTomarNumero(QWidget):
         self.tabs.addTab(TabInformeJuridico(), "Informe Juridico")
         self.tabs.addTab(TabDictamen(), "Dictamen")
         self.tabs.addTab(TabResolucion(), "Resolución")
-        self.tabs.addTab(TabDocumentoExtra(), "Extra (provicional)")
+        self.tabs.addTab(TabDocumentoExtra(), "Oficios/Memorandos/Respuestas")
 
         layout.addWidget(self.tabs)
 

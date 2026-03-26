@@ -43,7 +43,7 @@ class WidgetImpugnacion(QWidget):
 
         box_memo = QGroupBox("Memorando de Petición de PAS")
         lay_memo = QVBoxLayout()
-        self.combo_memos = MemoComboBox([(None, "")] + catalogo_documentos(1))
+        self.combo_memos = MemoComboBox([{"id" : None, 'item' : ""}] + catalogo_documentos(1))
         lay_memo.addWidget(self.combo_memos)
         self.label_proveedor = QLabel("Proveedor: ")
         lay_memo.addWidget(self.label_proveedor)
@@ -82,7 +82,7 @@ class WidgetImpugnacion(QWidget):
         self.label_proveedor.setText(f"Proveedor: {info_memo['proveedor']}")
         self.label_cedula.setText(f"Cedula/Ruc: {info_memo['cedula_ruc']}")
     def actualizar_combos(self):
-            self.combo_memos._setup_items([(None, "")] + catalogo_documentos(1))
+            self.combo_memos._setup_items([{"id" : None, 'item' : ""}] + catalogo_documentos(1))
             self.list_documentos.clear()
             
     def cargar_documentos(self):

@@ -81,11 +81,13 @@ class TabDocumentoExtra(BaseTabDocumento):
         self.label_origen.setText("Tipo Documento Origen: --")
         info_doc = busqueda_info_documento(self.combo_origen.currentData())
         if info_doc is not None:
-            tipo_origen = catalogo_tipos(info_doc['tipo_documento_id'])['id']
-            subtipo_origen = ("","")
+            tipos = catalogo_tipos(info_doc['tipo_documento_id'])
+            nombre_tipo = tipos[0]['nombre'] if tipos else '--'
+            nombre_subtipo = ("")
             if info_doc['subtipo_documento_id'] is not None:
-                subtipo_origen = catalogo_subtipos(info_doc['tipo_documento_id'], info_doc['subtipo_documento_id'])['id']
-            self.label_origen.setText(f'Tipo Documento Origen: {tipo_origen[1]} {subtipo_origen[1]}')
+                subtipos = catalogo_subtipos(info_doc['tipo_documento_id'], info_doc['subtipo_documento_id'])
+                nombre_subtipo = subtipos[0]['nombre'] if subtipos else ""
+            self.label_origen.setText(f'Tipo Documento Origen: {nombre_tipo} {nombre_subtipo}')
         else:
             return
 
@@ -116,6 +118,6 @@ class TabDocumentoExtra(BaseTabDocumento):
                 f"El documento ha sido adjuntado correctamente" \
                 f"{'\nFecha Termino: ' + str(fecha_termino[0]) if fecha_termino is not None else ''}"
             )
-            
+
         except Exception as e:
             QMessageBox.critical(self, "Error inesperado", f"No se pudo completar la operación:\n{e}")

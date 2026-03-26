@@ -172,7 +172,7 @@ db_docs/
         │   └── tab_de.py                    # Documentos extra (oficios, memorandos)
         ├── consultar/
         │   └── ui_consultar.py              # Búsqueda avanzada + exportación Excel
-        └── inpugnacion/
+        └── impugnacion/
             └── ui_impugnacion.py            # Registro de impugnaciones
 ```
 

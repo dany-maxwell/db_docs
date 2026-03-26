@@ -23,7 +23,7 @@ class BaseTabDocumento(QWidget):
         lay_memo = QVBoxLayout()
         
         self.combo_memos = MemoComboBox(
-            [(None, "")] + catalogo_documentos(1)
+            [{"id" : None, 'item' : ""}] + catalogo_documentos(1)
         )
         self.combo_memos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         lay_memo.addWidget(self.combo_memos)
@@ -78,7 +78,7 @@ class BaseTabDocumento(QWidget):
         pass
 
     def actualizar_combos(self):
-        self.combo_memos._setup_items([(None, "")] + catalogo_documentos(1))
+        self.combo_memos._setup_items([{"id" : None, 'item' : ""}] + catalogo_documentos(1))
         self.filtrar_origen_custom()
         self.actualizar_combos_extra()
 

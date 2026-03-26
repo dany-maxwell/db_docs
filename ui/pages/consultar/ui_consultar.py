@@ -87,7 +87,7 @@ class WidgetConsultar(QWidget):
             self.tabla.insertRow(row_idx)
             
             for col_idx, db_idx in enumerate(INDICES_DB_CONSULTAR):
-                valor = fila_data[db_idx] if db_idx < len(fila_data) else None
+                valor = fila_data[db_idx]
                 texto = str(valor) if valor is not None else ""
                 self.tabla.setItem(row_idx, col_idx, QTableWidgetItem(texto))
                 

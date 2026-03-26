@@ -30,9 +30,11 @@ class BaseComboBox(QComboBox):
         self.blockSignals(True)
         self.clear()
         
-        codigos = [item[1] for item in items]
-        for id_valor, codigo in items:
-            self.addItem(codigo, id_valor)
+        codigos = []
+        for item in items:
+            codigo = item['item']
+            self.addItem(codigo, item['id'])
+            codigos.append(codigo)
 
         if self.isEditable():
             self.lineEdit().setPlaceholderText(self.PLACEHOLDER)
@@ -151,7 +153,7 @@ class FormularioBusqueda(QWidget):
 
         self.box_bus = QGroupBox("Búsqueda")
         lay_bus = QGridLayout(self.box_bus)
-        self.combo_memo = MemoComboBox([(None, "")] + catalogo_documentos(1))
+        self.combo_memo = MemoComboBox([{"id" : None, 'item' : ""}] + catalogo_documentos(1))
         self.combo_prov = CatalogoComboBox(catalogo_proveedores())
         self.combo_unid = CatalogoComboBox(catalogo_unidades())
         self.txt_codigo = QLineEdit()
@@ -197,7 +199,7 @@ class FormularioBusqueda(QWidget):
         layout.addWidget(self.btn_limpiar)
     
     def actualizar_combos(self):
-        self.combo_memo._setup_items([(None, "")] + catalogo_documentos(1))
+        self.combo_memo._setup_items([{"id" : None, 'item' : ""}] + catalogo_documentos(1))
         self.combo_prov._setup_items(catalogo_proveedores())
 
     def obtener_filtros(self):

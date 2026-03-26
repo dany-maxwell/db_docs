@@ -26,7 +26,7 @@ def crear_tramite(
         fetch_one=True,
         commit=True
     )
-    tramite_id = result[0]
+    tramite_id = result['crear_tramite']
 
     query2 = "select codigo_final, fecha_documento from documento where tramite_id = %s and tipo_documento_id = 1"
     codigo_memo_generado, fecha_memo_generada = ejecutar_query(query2, (tramite_id,), fetch_one=True)
@@ -58,15 +58,15 @@ def crear_documento_con_numeracion(
         fetch_one=True,
         commit=True
     )
-    id_doc = result[0]
+    id_doc = result['crear_documento']
 
     query2 = "select codigo_final, fecha_documento from documento where id = %s"
-    codigo_generado, fecha = ejecutar_query(query2, (id_doc,), fetch_one=True)
+    row = ejecutar_query(query2, (id_doc,), fetch_one=True)
 
     return {
         "id": id_doc,
-        "codigo": codigo_generado,
-        "fecha": fecha
+        "codigo": row['codigo_final'],
+        "fecha": row['fecha_documento']
     }
 
 def anadir_documento_manual(tramite, codigo, fecha, tipo, subtipo, origen):
@@ -109,10 +109,10 @@ def crear_proveedor(nombre, cedula, canton, ciudad, provincia):
     result = ejecutar_query(query, (nombre, cedula, canton, ciudad, provincia),fetch_one=True, commit=True)
     if not result:
         raise RuntimeError("No se pudo crear el proveedor.")
-    proveedor_id = result
+    proveedor_id = result['nuevo_proveedor']
     query2="select nombre, cedula_ruc from proveedor where id = %s"
-    n_nombre, n_cedula = ejecutar_query(query2, proveedor_id, fetch_one=True, commit=True)
-    return n_nombre, n_cedula
+    row = ejecutar_query(query2, proveedor_id, fetch_one=True, commit=True)
+    return row['nombre'], row['cedula_ruc']
 
 def asignar_fecha_termino(fecha, plazo):
     query="select sumar_dias_laborables(%s, %s)"
