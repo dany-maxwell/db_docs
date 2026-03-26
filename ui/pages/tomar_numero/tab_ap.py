@@ -5,7 +5,7 @@ from ui.widgets.widgets import OrigenComboBox
 from services.catalogo_service import catalogo_documentos
 from services.busqueda_service import busqueda_por_memo
 from services.auditoria_service import actualizar_estado
-from constants import TIPO_DOCUMENTO_AP, TIPO_DOCUMENTO_MEMO
+from constants import TIPO_DOCUMENTO_AP
 
 
 class TabActuacionPrevia(BaseTabDocumento):

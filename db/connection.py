@@ -26,6 +26,9 @@ def get_connection():
     conn = _get_pool().getconn()
     try:
         yield conn
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         _get_pool().putconn(conn)
 

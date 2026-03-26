@@ -45,7 +45,7 @@ def catalogo_documentos_tramite(id_tramite, no_resueltos=False):
     if no_resueltos:
         query += " and estado <> 'RESUELTO'"
 
-    query += "order by fecha_documento asc nulls last, documento_id asc"
+    query += " order by fecha_documento asc nulls last, documento_id asc"
     return ejecutar_query(query, params, fetch_all=True)
 
 def catalogo_reporte():

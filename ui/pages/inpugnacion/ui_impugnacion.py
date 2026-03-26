@@ -10,11 +10,10 @@ from services.catalogo_service import (
     catalogo_documentos_tramite)
 
 from services.busqueda_service import (
-    busqueda_por_memo,
     busqueda_por_memo)
 
 from services.auditoria_service import (
-    aplicar_inpugnacion)
+    aplicar_impugnacion)
 class WidgetImpugnacion(QWidget):
     def __init__(self):
         super().__init__()
@@ -132,7 +131,7 @@ class WidgetImpugnacion(QWidget):
         fecha = self.date_impugnacion.date().toString("yyyy-MM-dd")
         id_documento = self.list_documentos.currentItem().data(Qt.UserRole) if self.list_documentos.currentItem() else None
         
-        aplicar_inpugnacion(
+        aplicar_impugnacion(
             codigo_impugnacion=codigo,
             fecha_impugnacion=fecha,
             tramite_id=id_tramite,
