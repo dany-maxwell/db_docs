@@ -99,13 +99,22 @@ class TabDocumentoExtra(BaseTabDocumento):
             tipo = self.combo_tipos.currentData()
             subtipo = self.combo_subtipos.currentData()
             origen = self.combo_origen.currentData()
+            tipo_origen = busqueda_documento_origen(origen)['tipo_documento_id']
+            subtipo_origen = busqueda_documento_origen(origen)['subtipo_documento_id']
 
-            if tipo == 12 and subtipo == 13:
+            if tipo == 12 and subtipo == 13 and tipo_origen == 7 and subtipo_origen == 4:
                 plazo = busqueda_documento_origen(origen)['plazo']
                 fecha_termino = asignar_fecha_termino(fecha_documento, plazo)
+                message =   f"El documento ha sido adjuntado correctamente" \
+                            f"\nCodigo: {codigo_documento}" \
+                            f"\nFecha Documento: {fecha_documento}" \
+                            f"\nFecha Termino: {str(fecha_termino)}"
             else: 
                 plazo = None
                 fecha_termino = None
+                message =   f"El documento ha sido adjuntado correctamente" \
+                            f"\nCodigo: {codigo_documento}" \
+                            f"\nFecha Documento: {fecha_documento}"
 
 
             crear_documento_con_numeracion(tramite_id=tramite, codigo_manual=codigo_documento, fecha_documento=fecha_documento,
@@ -115,8 +124,7 @@ class TabDocumentoExtra(BaseTabDocumento):
             QMessageBox.information(
                 self,
                 "Adjuntado Correctamente",
-                f"El documento ha sido adjuntado correctamente" \
-                f"{'\nFecha Termino: ' + str(fecha_termino) if fecha_termino is not None else ''}"
+                message
             )
 
         except Exception as e:
