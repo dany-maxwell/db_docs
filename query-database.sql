@@ -28,7 +28,7 @@ CREATE SEQUENCE public.documento_id_seq
 
 ALTER SEQUENCE public.documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.documento_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.documento_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.infraccion_id_seq;
 
@@ -44,7 +44,7 @@ CREATE SEQUENCE public.infraccion_id_seq
 
 ALTER SEQUENCE public.infraccion_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.infraccion_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.infraccion_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.infraccion_id_seq TO user_app;
 
 -- DROP SEQUENCE public.plantilla_codigo_id_seq;
 
@@ -60,7 +60,7 @@ CREATE SEQUENCE public.plantilla_codigo_id_seq
 
 ALTER SEQUENCE public.plantilla_codigo_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.plantilla_codigo_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.plantilla_codigo_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.plantilla_codigo_id_seq TO user_app;
 
 -- DROP SEQUENCE public.proveedor_id_seq;
 
@@ -76,7 +76,7 @@ CREATE SEQUENCE public.proveedor_id_seq
 
 ALTER SEQUENCE public.proveedor_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.proveedor_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.proveedor_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.proveedor_id_seq TO user_app;
 
 -- DROP SEQUENCE public.secuencia_documento_id_seq;
 
@@ -92,7 +92,7 @@ CREATE SEQUENCE public.secuencia_documento_id_seq
 
 ALTER SEQUENCE public.secuencia_documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.secuencia_documento_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.secuencia_documento_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.secuencia_documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.servicio_id_seq;
 
@@ -108,7 +108,7 @@ CREATE SEQUENCE public.servicio_id_seq
 
 ALTER SEQUENCE public.servicio_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.servicio_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.servicio_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.servicio_id_seq TO user_app;
 
 -- DROP SEQUENCE public.subtipo_documento_id_seq;
 
@@ -124,7 +124,7 @@ CREATE SEQUENCE public.subtipo_documento_id_seq
 
 ALTER SEQUENCE public.subtipo_documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.subtipo_documento_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.subtipo_documento_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.subtipo_documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.tipo_documento_id_seq;
 
@@ -140,7 +140,7 @@ CREATE SEQUENCE public.tipo_documento_id_seq
 
 ALTER SEQUENCE public.tipo_documento_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.tipo_documento_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.tipo_documento_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.tipo_documento_id_seq TO user_app;
 
 -- DROP SEQUENCE public.tramite_id_seq;
 
@@ -156,7 +156,7 @@ CREATE SEQUENCE public.tramite_id_seq
 
 ALTER SEQUENCE public.tramite_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.tramite_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.tramite_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.tramite_id_seq TO user_app;
 
 -- DROP SEQUENCE public.trazabilidad_tramite_id_seq;
 
@@ -172,7 +172,7 @@ CREATE SEQUENCE public.trazabilidad_tramite_id_seq
 
 ALTER SEQUENCE public.trazabilidad_tramite_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.trazabilidad_tramite_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.trazabilidad_tramite_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.trazabilidad_tramite_id_seq TO user_app;
 
 -- DROP SEQUENCE public.unidad_id_seq;
 
@@ -188,7 +188,7 @@ CREATE SEQUENCE public.unidad_id_seq
 
 ALTER SEQUENCE public.unidad_id_seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.unidad_id_seq TO postgres;
-GRANT SELECT, USAGE ON SEQUENCE public.unidad_id_seq TO user_app;
+GRANT USAGE, SELECT ON SEQUENCE public.unidad_id_seq TO user_app;
 -- public.feriados definition
 
 -- Drop table
@@ -205,7 +205,7 @@ CREATE TABLE public.feriados (
 
 ALTER TABLE public.feriados OWNER TO postgres;
 GRANT ALL ON TABLE public.feriados TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.feriados TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.feriados TO user_app;
 
 
 -- public.infraccion definition
@@ -225,7 +225,7 @@ CREATE TABLE public.infraccion (
 
 ALTER TABLE public.infraccion OWNER TO postgres;
 GRANT ALL ON TABLE public.infraccion TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.infraccion TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.infraccion TO user_app;
 
 
 -- public.proveedor definition
@@ -255,7 +255,7 @@ insert
 
 ALTER TABLE public.proveedor OWNER TO postgres;
 GRANT ALL ON TABLE public.proveedor TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.proveedor TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.proveedor TO user_app;
 
 
 -- public.servicio definition
@@ -274,7 +274,7 @@ CREATE TABLE public.servicio (
 
 ALTER TABLE public.servicio OWNER TO postgres;
 GRANT ALL ON TABLE public.servicio TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.servicio TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.servicio TO user_app;
 
 
 -- public.tipo_documento definition
@@ -295,7 +295,7 @@ CREATE TABLE public.tipo_documento (
 
 ALTER TABLE public.tipo_documento OWNER TO postgres;
 GRANT ALL ON TABLE public.tipo_documento TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.tipo_documento TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.tipo_documento TO user_app;
 
 
 -- public.trazabilidad_tramite definition
@@ -320,7 +320,7 @@ CREATE INDEX idx_trazabilidad_tramite ON public.trazabilidad_tramite USING btree
 
 ALTER TABLE public.trazabilidad_tramite OWNER TO postgres;
 GRANT ALL ON TABLE public.trazabilidad_tramite TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.trazabilidad_tramite TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.trazabilidad_tramite TO user_app;
 
 
 -- public.unidad definition
@@ -340,7 +340,7 @@ CREATE TABLE public.unidad (
 
 ALTER TABLE public.unidad OWNER TO postgres;
 GRANT ALL ON TABLE public.unidad TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.unidad TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.unidad TO user_app;
 
 
 -- public.plantilla_codigo definition
@@ -362,7 +362,7 @@ CREATE TABLE public.plantilla_codigo (
 
 ALTER TABLE public.plantilla_codigo OWNER TO postgres;
 GRANT ALL ON TABLE public.plantilla_codigo TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.plantilla_codigo TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.plantilla_codigo TO user_app;
 
 
 -- public.secuencia_documento definition
@@ -384,7 +384,7 @@ CREATE TABLE public.secuencia_documento (
 
 ALTER TABLE public.secuencia_documento OWNER TO postgres;
 GRANT ALL ON TABLE public.secuencia_documento TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.secuencia_documento TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.secuencia_documento TO user_app;
 
 
 -- public.subtipo_documento definition
@@ -405,7 +405,7 @@ CREATE TABLE public.subtipo_documento (
 
 ALTER TABLE public.subtipo_documento OWNER TO postgres;
 GRANT ALL ON TABLE public.subtipo_documento TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.subtipo_documento TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.subtipo_documento TO user_app;
 
 
 -- public.tramite definition
@@ -437,7 +437,7 @@ CREATE INDEX idx_tramite_unidad ON public.tramite USING btree (unidad_id);
 
 ALTER TABLE public.tramite OWNER TO postgres;
 GRANT ALL ON TABLE public.tramite TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.tramite TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.tramite TO user_app;
 
 
 -- public.documento definition
@@ -463,7 +463,7 @@ CREATE TABLE public.documento (
 	CONSTRAINT documento_documento_origen_id_fkey FOREIGN KEY (documento_origen_id) REFERENCES public.documento(id),
 	CONSTRAINT documento_subtipo_documento_id_fkey FOREIGN KEY (subtipo_documento_id) REFERENCES public.subtipo_documento(id),
 	CONSTRAINT documento_tipo_documento_id_fkey FOREIGN KEY (tipo_documento_id) REFERENCES public.tipo_documento(id),
-	CONSTRAINT documento_tramite_id_fkey FOREIGN KEY (tramite_id) REFERENCES public.tramite(id)
+	CONSTRAINT documento_tramite_id_fkey FOREIGN KEY (tramite_id) REFERENCES public.tramite(id) ON DELETE CASCADE
 );
 CREATE INDEX idx_documento_codigo ON public.documento USING btree (codigo_final);
 CREATE INDEX idx_documento_codigo_trgm ON public.documento USING gin (codigo_final gin_trgm_ops);
@@ -488,7 +488,7 @@ insert
 
 ALTER TABLE public.documento OWNER TO postgres;
 GRANT ALL ON TABLE public.documento TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.documento TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.documento TO user_app;
 
 
 -- public.documento_infraccion definition
@@ -501,7 +501,7 @@ CREATE TABLE public.documento_infraccion (
 	documento_id int4 NOT NULL,
 	infraccion_id int4 NOT NULL,
 	CONSTRAINT documento_infraccion_pkey PRIMARY KEY (documento_id, infraccion_id),
-	CONSTRAINT documento_infraccion_documento_id_fkey FOREIGN KEY (documento_id) REFERENCES public.documento(id),
+	CONSTRAINT documento_infraccion_documento_id_fkey FOREIGN KEY (documento_id) REFERENCES public.documento(id) ON DELETE CASCADE,
 	CONSTRAINT documento_infraccion_infraccion_id_fkey FOREIGN KEY (infraccion_id) REFERENCES public.infraccion(id)
 );
 
@@ -509,7 +509,7 @@ CREATE TABLE public.documento_infraccion (
 
 ALTER TABLE public.documento_infraccion OWNER TO postgres;
 GRANT ALL ON TABLE public.documento_infraccion TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.documento_infraccion TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.documento_infraccion TO user_app;
 
 
 -- public.v_busqueda_avanzada source
@@ -550,7 +550,7 @@ AS SELECT t.id AS tramite_id,
 
 ALTER TABLE public.v_busqueda_avanzada OWNER TO postgres;
 GRANT ALL ON TABLE public.v_busqueda_avanzada TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.v_busqueda_avanzada TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.v_busqueda_avanzada TO user_app;
 
 
 -- public.v_consulta_documentos source
@@ -584,7 +584,7 @@ AS SELECT d.id,
 
 ALTER TABLE public.v_consulta_documentos OWNER TO postgres;
 GRANT ALL ON TABLE public.v_consulta_documentos TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.v_consulta_documentos TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.v_consulta_documentos TO user_app;
 
 
 -- public.v_documentos_tramite source
@@ -614,7 +614,7 @@ AS SELECT d.tramite_id,
 
 ALTER TABLE public.v_documentos_tramite OWNER TO postgres;
 GRANT ALL ON TABLE public.v_documentos_tramite TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.v_documentos_tramite TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.v_documentos_tramite TO user_app;
 
 
 -- public.v_info_tramite_por_memo source
@@ -638,7 +638,7 @@ AS SELECT d.id,
 
 ALTER TABLE public.v_info_tramite_por_memo OWNER TO postgres;
 GRANT ALL ON TABLE public.v_info_tramite_por_memo TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.v_info_tramite_por_memo TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.v_info_tramite_por_memo TO user_app;
 
 
 -- public.v_jp source
@@ -658,7 +658,7 @@ AS SELECT p.nombre AS proveedor_id,
 
 ALTER TABLE public.v_jp OWNER TO postgres;
 GRANT ALL ON TABLE public.v_jp TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.v_jp TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.v_jp TO user_app;
 
 
 -- public.v_reporte_tramites source
@@ -820,7 +820,7 @@ AS SELECT t.id AS tramite,
 
 ALTER TABLE public.v_reporte_tramites OWNER TO postgres;
 GRANT ALL ON TABLE public.v_reporte_tramites TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.v_reporte_tramites TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.v_reporte_tramites TO user_app;
 
 
 -- public.vista_seguimiento_final source
@@ -1379,7 +1379,7 @@ AS WITH datos_agrupados AS (
 
 ALTER TABLE public.vista_seguimiento_final OWNER TO postgres;
 GRANT ALL ON TABLE public.vista_seguimiento_final TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.vista_seguimiento_final TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.vista_seguimiento_final TO user_app;
 
 
 -- public.vista_seguimiento_tipos source
@@ -1436,7 +1436,7 @@ AS WITH RECURSIVE historial_completo AS (
 
 ALTER TABLE public.vista_seguimiento_tipos OWNER TO postgres;
 GRANT ALL ON TABLE public.vista_seguimiento_tipos TO postgres;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.vista_seguimiento_tipos TO user_app;
+GRANT INSERT, UPDATE, SELECT ON TABLE public.vista_seguimiento_tipos TO user_app;
 
 
 
